@@ -12,4 +12,10 @@
     <string name="categories">Kategoriler</string>
     <string name="add_product">Ürün Ekle</string>
     <string name="profile">Profil</string>
+
+    <string name="field_cant_be_empty">alanı boş olamaz</string>
+    <string name="did_not_match_passwords">Şifreler aynı değil</string>
+    <string name="wrong_email_type">Yanlış e-mail tipi</string>
+    <string name="short_password">Şifre en az 6 karakterli olmalı</string>
+    <string name="long_password">Şifre en fazla 18 karakterli olmalı</string>
 </resources>
