@@ -8,4 +8,8 @@
     <string name="full_name">Ad Soyad</string>
     <string name="password_again">Şifre Tekrar</string>
     <string name="login_question">Zaten bir hesabınız var mı?</string>
+    <string name="home_page">Anasayfa</string>
+    <string name="categories">Kategoriler</string>
+    <string name="add_product">Ürün Ekle</string>
+    <string name="profile">Profil</string>
 </resources>

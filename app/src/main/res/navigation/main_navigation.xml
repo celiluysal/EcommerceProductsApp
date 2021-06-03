@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.celiluysal.ecommerceproductsapp.ui.home.HomeFragment"
+        android:label="home_fragment"
+        tools:layout="@layout/home_fragment" />
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.celiluysal.ecommerceproductsapp.ui.categories.CategoriesFragment"
+        android:label="categories_fragment"
+        tools:layout="@layout/categories_fragment" />
+    <fragment
+        android:id="@+id/addProductFragment"
+        android:name="com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragment"
+        android:label="add_product_fragment"
+        tools:layout="@layout/add_product_fragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.celiluysal.ecommerceproductsapp.ui.profile.ProfileFragment"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
+</navigation>

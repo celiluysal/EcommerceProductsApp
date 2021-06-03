@@ -1,4 +1,4 @@
-package com.celiluysal.ecommerceproductsapp.ui.login_register.register
+package com.celiluysal.ecommerceproductsapp.ui.home
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,15 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
-import com.celiluysal.ecommerceproductsapp.databinding.RegisterFragmentBinding
+import com.celiluysal.ecommerceproductsapp.databinding.HomeFragmentBinding
 
-class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel>() {
+class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
 
     companion object {
-        fun newInstance() = RegisterFragment()
+        fun newInstance() = HomeFragment()
     }
 
     override fun onCreateView(
@@ -22,25 +21,20 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-
-        binding.textViewLogin.setOnClickListener {
-            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment())
-        }
-
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): RegisterFragmentBinding {
-        return RegisterFragmentBinding.inflate(inflater, container, false)
+    ): HomeFragmentBinding {
+        return HomeFragmentBinding.inflate(inflater, container, false)
     }
 
 }
