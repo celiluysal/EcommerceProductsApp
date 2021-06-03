@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">EcommerceProductsApp</string>
+    <string name="login">Oturum Aç</string>
+    <string name="email">E-mail</string>
+    <string name="password">Şifre</string>
+    <string name="account_question">Hesabınız yok mu?</string>
+    <string name="register">Kaydol</string>
+    <string name="full_name">Ad Soyad</string>
+    <string name="password_again">Şifre Tekrar</string>
+    <string name="login_question">Zaten bir hesabınız var mı?</string>
 </resources>

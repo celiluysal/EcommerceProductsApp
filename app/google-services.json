@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1022560347209",
+    "project_id": "ep-android-fc9e0",
+    "storage_bucket": "ep-android-fc9e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022560347209:android:0adcde6383738778644b98",
+        "android_client_info": {
+          "package_name": "com.celiluysal.ecommerceproductsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022560347209-0j7gnjlnqfeqtom6h3bli50qkaeqp74e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw0EtDWE3y28sjoBNKUffvcXXPifUmZQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022560347209-0j7gnjlnqfeqtom6h3bli50qkaeqp74e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

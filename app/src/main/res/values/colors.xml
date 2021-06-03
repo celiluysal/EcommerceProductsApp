@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <color name="nyanza">#D8F3DC</color>
+    <color name="turquoise_green_light">#B7E4C7</color>
+    <color name="turquoise_green_dark">#95D5B2</color>
+    <color name="ocean_green_light">#74C69D</color>
+    <color name="ocean_green_dark">#52B788</color>
+    <color name="bottle_green_light">#40916C</color>
+    <color name="bottle_green_dark">#2D6A4F</color>
+
 </resources>
