@@ -18,4 +18,5 @@
     <string name="wrong_email_type">Yanlış e-mail tipi</string>
     <string name="short_password">Şifre en az 6 karakterli olmalı</string>
     <string name="long_password">Şifre en fazla 18 karakterli olmalı</string>
+    <string name="logout">Çıkış Yap</string>
 </resources>

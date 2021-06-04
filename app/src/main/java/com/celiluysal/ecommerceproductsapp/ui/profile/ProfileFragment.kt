@@ -1,5 +1,6 @@
 package com.celiluysal.ecommerceproductsapp.ui.profile
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProfileFragmentBinding
+import com.celiluysal.ecommerceproductsapp.ui.login_register.LoginRegisterActivity
 
 class ProfileFragment : BaseFragment<ProfileFragmentBinding, ProfileViewModel>() {
 
@@ -19,16 +21,21 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding, ProfileViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+
+        binding.buttonLogout.setOnClickListener {
+            viewModel.logout()
+            activity?.let {
+                it.startActivity(Intent(it, LoginRegisterActivity::class.java))
+                it.finish()
+            }
+        }
+
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
 
     override fun getViewBinding(
         inflater: LayoutInflater,
