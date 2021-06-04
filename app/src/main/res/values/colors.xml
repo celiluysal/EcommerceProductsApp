@@ -21,4 +21,7 @@
     <color name="bottle_green_light">#40916C</color>
     <color name="bottle_green_dark">#2D6A4F</color>
 
+    <color name="screen_background">#f8f9fa</color>
+    <color name="card_background">@color/white</color>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.celiluysal.ecommerceproductsapp.firebase
 
+import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.User
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -11,15 +12,78 @@ class FirebaseManager {
         val shared = FirebaseManager()
     }
 
-    private var dbRef = Firebase.database.reference
-    private var auth = Firebase.auth
+    private val dbRef = Firebase.database.reference
+    private val productsRef = dbRef.child("Products")
+    private val usersRef = dbRef.child("Users")
+    private val categoriesRef = dbRef.child("Categories")
 
+    private val auth = Firebase.auth
+
+    fun addProduct(
+        product: Product,
+        Result: ((success: Boolean, error: String?) -> Unit)
+    ) {
+        productsRef.child(product.id).setValue(product.toDict())
+            .addOnSuccessListener {
+
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
+    fun fetchProductsByName(
+        name: String,
+        count: Int = 10,
+        Result: ((products: MutableList<Product>?, error: String?) -> Unit)
+    ) {
+        productsRef.orderByChild("name").limitToFirst(count).equalTo(name).get()
+            .addOnSuccessListener {
+                val products = FirebaseUtils.shared.snapshotToProducts(it)
+                if (products.isNotEmpty())
+                    Result.invoke(products,null)
+                else
+                    Result.invoke(null, "Result is empty")
+            }
+            .addOnFailureListener {
+                Result.invoke(null, it.localizedMessage)
+            }
+    }
+
+    fun fetchProductsByCategoryId(
+        categoryId: Int,
+        count: Int = 10,
+        Result: ((products: MutableList<Product>?, error: String?) -> Unit)
+    ) {
+        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId.toDouble()).get()
+            .addOnSuccessListener {
+                val products = FirebaseUtils.shared.snapshotToProducts(it)
+                if (products.isNotEmpty())
+                    Result.invoke(products,null)
+                else
+                    Result.invoke(null, "Result is empty")
+            }
+            .addOnFailureListener {
+                Result.invoke(null, it.localizedMessage)
+            }
+    }
+
+    fun fetchProductById(id: String, Result: ((product: Product?, error: String?) -> Unit)) {
+        productsRef.child(id).get()
+            .addOnSuccessListener {
+                val product = FirebaseUtils.shared.snapshotToProduct(it)
+                Result.invoke(product, null)
+            }
+            .addOnFailureListener {
+                Result.invoke(null, it.localizedMessage)
+            }
+    }
 
     fun fetchUser(
         userId: String,
         Result: (user: User?, error: String?) -> Unit
     ) {
-        dbRef.child("Users").child(userId).get()
+        usersRef.child(userId).get()
             .addOnSuccessListener { dataSnapshot ->
                 val dict = dataSnapshot.value as HashMap<*, *>
                 val user = User(
@@ -63,7 +127,7 @@ class FirebaseManager {
         uid: String,
         Result: ((success: Boolean, error: String?) -> Unit)
     ) {
-        dbRef.child("Users").child(uid).setValue(
+        usersRef.child(uid).setValue(
             hashMapOf<String, Any?>(
                 "userId" to uid,
                 "fullName" to request.fullName,

@@ -27,9 +27,9 @@ class SessionManager {
         val currentUser = FirebaseManager.shared.getCurrentUser()
 
         currentUser?.let { firebaseUser ->
-            firebaseManager.fetchUser(firebaseUser.uid) { wtUser: User?, error: String? ->
-                if (wtUser != null) {
-                    loggedIn(wtUser)
+            firebaseManager.fetchUser(firebaseUser.uid) { user: User?, error: String? ->
+                if (user != null) {
+                    loggedIn(user)
                     Result.invoke(true, "")
                 } else {
                     Result.invoke(false, error)

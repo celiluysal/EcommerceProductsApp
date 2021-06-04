@@ -21,14 +21,10 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
+
 
         return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     override fun getViewBinding(

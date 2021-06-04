@@ -19,4 +19,8 @@
     <string name="short_password">Şifre en az 6 karakterli olmalı</string>
     <string name="long_password">Şifre en fazla 18 karakterli olmalı</string>
     <string name="logout">Çıkış Yap</string>
+    <string name="save">Kaydet</string>
+    <string name="product_name">Ürün Adı</string>
+    <string name="product_description">Ürün açıklaması</string>
+    <string name="price">Fiyat</string>
 </resources>

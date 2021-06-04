@@ -25,6 +25,8 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding, ProfileViewModel>()
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
+        observeViewModel()
+
         binding.buttonLogout.setOnClickListener {
             viewModel.logout()
             activity?.let {
@@ -34,6 +36,13 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding, ProfileViewModel>()
         }
 
         return binding.root
+    }
+
+    private fun observeViewModel() {
+        viewModel.user.observe(viewLifecycleOwner, { user ->
+            binding.textViewFullName.text = user.fullName
+            binding.textViewEmail.text = user.email
+        })
     }
 
 
