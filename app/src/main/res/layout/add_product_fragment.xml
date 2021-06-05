@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,17 +7,13 @@
     tools:context=".ui.add_product.AddProductFragment"
     android:background="@color/screen_background">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
-
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:isScrollContainer="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,6 +115,5 @@
 
         </androidx.cardview.widget.CardView>
 
-    </androidx.core.widget.NestedScrollView>
 
-</RelativeLayout>
+</ScrollView>

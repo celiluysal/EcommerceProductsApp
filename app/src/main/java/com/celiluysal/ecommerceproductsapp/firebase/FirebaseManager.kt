@@ -50,6 +50,24 @@ class FirebaseManager {
             }
     }
 
+    fun fetchOrderedProducts(
+        orderBy: String,
+        count: Int = 10,
+        Result: ((products: MutableList<Product>?, error: String?) -> Unit)
+    ) {
+        productsRef.orderByChild(orderBy).limitToFirst(count).get()
+            .addOnSuccessListener {
+                val products = FirebaseUtils.shared.snapshotToProducts(it)
+                if (products.isNotEmpty())
+                    Result.invoke(products,null)
+                else
+                    Result.invoke(null, "Result is empty")
+            }
+            .addOnFailureListener {
+                Result.invoke(null, it.localizedMessage)
+            }
+    }
+
     fun fetchProductsByCategoryId(
         categoryId: Int,
         count: Int = 10,
@@ -140,7 +158,6 @@ class FirebaseManager {
             .addOnFailureListener {
                 Result.invoke(false, it.localizedMessage)
             }
-
     }
 
     fun login(

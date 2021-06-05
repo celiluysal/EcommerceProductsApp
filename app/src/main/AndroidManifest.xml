@@ -21,10 +21,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.login_register.LoginRegisterActivity"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".ui.MainActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ui.login_register.LoginRegisterActivity" />
+        <activity android:name=".ui.MainActivity"/>
     </application>
 
 </manifest>

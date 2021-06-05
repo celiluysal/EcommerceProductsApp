@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
@@ -23,9 +24,9 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
 
-
         return binding.root
     }
+
 
     override fun getViewBinding(
         inflater: LayoutInflater,
