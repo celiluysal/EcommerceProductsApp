@@ -45,7 +45,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding, LoginViewModel>() {
         }
 
         binding.textViewRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToRegisterFragment())
         }
 
         return binding.root

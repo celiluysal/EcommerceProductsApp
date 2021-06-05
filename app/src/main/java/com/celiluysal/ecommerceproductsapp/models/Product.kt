@@ -1,5 +1,7 @@
 package com.celiluysal.ecommerceproductsapp.models
 
+import java.io.Serializable
+
 data class Product(
     var id: String,
     var name: String,
@@ -8,7 +10,7 @@ data class Product(
     var imageUrl: String,
     var categoryId: Int,
     var price: Double
-) {
+) : Serializable {
     fun toDict(): HashMap<*, *> {
         return hashMapOf(
             "id" to id,

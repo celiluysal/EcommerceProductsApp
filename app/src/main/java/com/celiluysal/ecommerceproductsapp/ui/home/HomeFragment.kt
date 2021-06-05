@@ -1,21 +1,17 @@
 package com.celiluysal.ecommerceproductsapp.ui.home
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.celiluysal.ecommerceproductsapp.R
+import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.HomeFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
-import com.celiluysal.ecommerceproductsapp.ui.login_register.login.ProductsRecyclerViewAdapter
+import com.celiluysal.ecommerceproductsapp.ui.add_product.ProductsRecyclerViewAdapter
 
 class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
 
@@ -47,11 +43,8 @@ class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
             productsRecyclerViewAdapter = ProductsRecyclerViewAdapter(
                 products,
                 object : ProductsRecyclerViewAdapter.ProductAdapterClickListener {
-                    @SuppressLint("ShowToast")
                     override fun onProductCardClick(item: Product, position: Int) {
-                        Toast.makeText(context, "selected item: ${item.name}", Toast.LENGTH_SHORT)
-                        Log.e("click", "selected item: ${item.name}")
-
+                        findNavController().navigate(MainNavigationDirections.actionToProductDetailFragment(item))
                     }
                 })
             binding.recyclerViewProducts.adapter = productsRecyclerViewAdapter

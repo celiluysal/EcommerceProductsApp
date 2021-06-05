@@ -1,8 +1,10 @@
-package com.celiluysal.ecommerceproductsapp.ui.login_register.login
+package com.celiluysal.ecommerceproductsapp.ui.add_product
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.databinding.ItemProductCardBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 
@@ -16,6 +18,10 @@ class ProductsRecyclerViewAdapter(val products: MutableList<Product>, val clickL
 
                 binding.textViewProductName.text = product.name
                 binding.textViewProductPrice.text = product.price.toString()
+
+                Glide.with(binding.root).load(product.imageUrl)
+                    .placeholder(R.drawable.place_holder)
+                    .into(binding.imageViewProduct)
 
 
                 itemView.setOnClickListener {
