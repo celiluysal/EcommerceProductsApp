@@ -21,6 +21,26 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="24dp"
+                    android:paddingTop="24dp">
+
+                    <ImageView
+                        android:id="@+id/imageViewProduct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="200dp"
+                        android:adjustViewBounds="true"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/im_take_photo"/>
+
+                </RelativeLayout>
+
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputProductName"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

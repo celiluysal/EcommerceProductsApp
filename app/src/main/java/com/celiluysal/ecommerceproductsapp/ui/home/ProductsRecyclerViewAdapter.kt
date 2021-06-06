@@ -1,4 +1,4 @@
-package com.celiluysal.ecommerceproductsapp.ui.add_product
+package com.celiluysal.ecommerceproductsapp.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,6 +30,8 @@ class ProductsRecyclerViewAdapter(val products: MutableList<Product>, val clickL
             }
 
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val binding = ItemProductCardBinding.inflate(

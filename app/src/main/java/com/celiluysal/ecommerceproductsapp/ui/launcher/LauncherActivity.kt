@@ -14,6 +14,8 @@ class LauncherActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState)
 
+        SessionManager.shared.loadCategories()
+
         if (SessionManager.shared.isLoggedIn()) {
             SessionManager.shared.fetchUser { success, error ->
                 if (success) {

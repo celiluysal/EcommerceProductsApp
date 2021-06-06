@@ -3,7 +3,7 @@ package com.celiluysal.ecommerceproductsapp.ui.login_register.register
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
-import com.celiluysal.ecommerceproductsapp.firebase.RegisterRequestModel
+import com.celiluysal.ecommerceproductsapp.models.RegisterRequestModel
 import com.celiluysal.ecommerceproductsapp.models.User
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 

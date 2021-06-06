@@ -8,7 +8,7 @@ data class Product(
     var description: String,
     var updateDate: String,
     var imageUrl: String,
-    var categoryId: Int,
+    var categoryId: String,
     var price: Double
 ) : Serializable {
     fun toDict(): HashMap<*, *> {

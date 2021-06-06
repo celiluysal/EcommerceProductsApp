@@ -12,6 +12,8 @@
     <string name="categories">Kategoriler</string>
     <string name="add_product">Ürün Ekle</string>
     <string name="profile">Profil</string>
+    <string name="category">Kategori</string>
+
 
     <string name="field_cant_be_empty">alanı boş olamaz</string>
     <string name="did_not_match_passwords">Şifreler aynı değil</string>
@@ -21,6 +23,6 @@
     <string name="logout">Çıkış Yap</string>
     <string name="save">Kaydet</string>
     <string name="product_name">Ürün Adı</string>
-    <string name="product_description">Ürün açıklaması</string>
+    <string name="product_description">Ürün Açıklaması</string>
     <string name="price">Fiyat</string>
 </resources>

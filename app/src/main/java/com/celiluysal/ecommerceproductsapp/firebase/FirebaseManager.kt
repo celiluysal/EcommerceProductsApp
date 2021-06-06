@@ -1,11 +1,17 @@
 package com.celiluysal.ecommerceproductsapp.firebase
 
+import android.graphics.Bitmap
+import android.util.Log
+import com.celiluysal.ecommerceproductsapp.models.Category
 import com.celiluysal.ecommerceproductsapp.models.Product
+import com.celiluysal.ecommerceproductsapp.models.RegisterRequestModel
 import com.celiluysal.ecommerceproductsapp.models.User
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
 
 class FirebaseManager {
     companion object {
@@ -13,11 +19,53 @@ class FirebaseManager {
     }
 
     private val dbRef = Firebase.database.reference
+    private val storageRef = Firebase.storage.reference
     private val productsRef = dbRef.child("Products")
     private val usersRef = dbRef.child("Users")
     private val categoriesRef = dbRef.child("Categories")
 
+
     private val auth = Firebase.auth
+
+    fun fetchCategories(Result: (categories: List<Category>?, error: String?) -> Unit) {
+        categoriesRef.get()
+            .addOnSuccessListener {
+                val categories = FirebaseUtils.shared.snapshotToCategories(it)
+                if (categories.isNotEmpty())
+                    Result.invoke(categories, null)
+                else
+                    Result.invoke(null, "Empty list")
+            }
+            .addOnFailureListener {
+                Result.invoke(null, it.localizedMessage)
+            }
+    }
+
+    fun uploadPhoto(
+        name: String,
+        photo: Bitmap,
+        Result: (photoUrl: String?, error: String?) -> Unit
+    ) {
+        val photoRef = storageRef.child("images/products/$name.jpeg")
+        val baos = ByteArrayOutputStream()
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+//        val data = ByteArrayOutputStream().toByteArray()
+
+        var uploadTask = photoRef.putBytes(baos.toByteArray())
+            .addOnSuccessListener {
+                storageRef.child("images/products/$name.jpeg").downloadUrl
+                    .addOnSuccessListener {
+                        Result.invoke(it.toString(), null)
+                    }.addOnFailureListener {
+                        // Handle any errors
+                    }
+            }
+            .addOnFailureListener {
+
+            }
+
+
+    }
 
     fun addProduct(
         product: Product,
@@ -25,10 +73,10 @@ class FirebaseManager {
     ) {
         productsRef.child(product.id).setValue(product.toDict())
             .addOnSuccessListener {
-
+                Result.invoke(true, null)
             }
             .addOnFailureListener {
-
+                Result.invoke(false, it.localizedMessage)
             }
     }
 
@@ -41,7 +89,7 @@ class FirebaseManager {
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())
-                    Result.invoke(products,null)
+                    Result.invoke(products, null)
                 else
                     Result.invoke(null, "Result is empty")
             }
@@ -59,7 +107,7 @@ class FirebaseManager {
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())
-                    Result.invoke(products,null)
+                    Result.invoke(products, null)
                 else
                     Result.invoke(null, "Result is empty")
             }
@@ -73,11 +121,12 @@ class FirebaseManager {
         count: Int = 10,
         Result: ((products: MutableList<Product>?, error: String?) -> Unit)
     ) {
-        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId.toDouble()).get()
+        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId.toDouble())
+            .get()
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())
-                    Result.invoke(products,null)
+                    Result.invoke(products, null)
                 else
                     Result.invoke(null, "Result is empty")
             }

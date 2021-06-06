@@ -11,7 +11,6 @@ import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.HomeFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
-import com.celiluysal.ecommerceproductsapp.ui.add_product.ProductsRecyclerViewAdapter
 
 class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
 

@@ -1,4 +1,4 @@
-package com.celiluysal.ecommerceproductsapp.firebase
+package com.celiluysal.ecommerceproductsapp.models
 
 data class RegisterRequestModel(
     var email: String,
