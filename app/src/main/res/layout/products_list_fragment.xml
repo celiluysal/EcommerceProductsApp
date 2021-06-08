@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.categories.CategoriesFragment"
+    tools:context=".ui.products_list.ProductsListFragment"
     android:background="@color/screen_background">
-
 
     <RelativeLayout
         android:id="@+id/relativeLayoutName"
@@ -26,7 +25,7 @@
             android:id="@+id/textViewListContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kategoriler"
+            android:text="@string/all_products"
             android:layout_centerInParent="true"
             android:background="@color/screen_background"
             android:paddingHorizontal="8dp"/>
@@ -35,20 +34,19 @@
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayoutCategories"
+        android:id="@+id/swipeRefreshLayoutProducts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/relativeLayoutName"
         android:padding="4dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewCategories"
+            android:id="@+id/recyclerViewProducts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_category_card"/>
+            tools:listitem="@layout/item_product_card"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 
 </RelativeLayout>

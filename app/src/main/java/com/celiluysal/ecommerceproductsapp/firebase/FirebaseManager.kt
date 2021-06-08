@@ -6,8 +6,13 @@ import com.celiluysal.ecommerceproductsapp.models.Category
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.RegisterRequestModel
 import com.celiluysal.ecommerceproductsapp.models.User
+import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -26,6 +31,16 @@ class FirebaseManager {
 
 
     private val auth = Firebase.auth
+
+    fun observeCategoriesChild(){
+        categoriesRef.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                SessionManager.shared.loadCategories()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 
     fun fetchCategories(Result: (categories: List<Category>?, error: String?) -> Unit) {
         categoriesRef.get()
@@ -117,11 +132,11 @@ class FirebaseManager {
     }
 
     fun fetchProductsByCategoryId(
-        categoryId: Int,
+        categoryId: String,
         count: Int = 10,
         Result: ((products: MutableList<Product>?, error: String?) -> Unit)
     ) {
-        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId.toDouble())
+        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId)
             .get()
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)

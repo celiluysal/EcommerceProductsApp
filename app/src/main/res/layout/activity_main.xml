@@ -9,11 +9,20 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@null"
+        android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:navigationIcon="@drawable/ic_back"/>
+        android:theme="?attr/actionBarTheme">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_logo"
+            style="@style/imageview_center"
+            android:padding="12dp"
+            app:tint="@color/white" />
+    </androidx.appcompat.widget.Toolbar>
 
     <fragment
         android:id="@+id/fragmentMainNavHost"

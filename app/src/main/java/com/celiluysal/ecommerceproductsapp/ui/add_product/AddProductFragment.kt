@@ -27,6 +27,8 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
+import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
+import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
 import java.io.File
@@ -39,6 +41,9 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
     }
 
     private var price: Double? = null
+    private lateinit var messageDialog: MessageDialog
+    private lateinit var loadingDialog: LoadingDialog
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +56,10 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
 
         binding.buttonSave.setOnClickListener {
             if (checkFields()) {
+                loadingDialog = LoadingDialog()
+                activity?.supportFragmentManager?.let {
+                    loadingDialog.show(it, "LoadingDialog")
+                }
                 viewModel.addProduct(
                     ProductRequestModel(
                         name = binding.textInputEditTextProductName.text.toString(),
@@ -59,7 +68,28 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                         price = binding.textInputEditTextProductPrice.text.toString().toDouble(),
                         photo = this.photo!!
                     )
-                )
+                ) { product, error ->
+                    loadingDialog.dismiss()
+                    if (product != null) {
+                        messageDialog = MessageDialog("Ürün başarıyla eklendi.",
+                            object : MessageDialog.MessageDialogListener {
+                                override fun onLeftButtonClick() {
+                                    messageDialog.dismiss()
+                                    binding.textInputEditTextProductName.text?.clear()
+                                    binding.textInputEditTextProductDescription.text?.clear()
+                                    binding.textInputEditTextProductPrice.text?.clear()
+                                    binding.imageViewProduct.setImageResource(R.drawable.im_take_photo)
+                                }
+                            })
+                        messageDialog.leftButtonText = getString(R.string.okay)
+                        activity?.supportFragmentManager?.let {
+                            messageDialog.show(
+                                it,
+                                "MessageDialog"
+                            )
+                        }
+                    }
+                }
 
             }
         }
@@ -67,8 +97,7 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         binding.imageViewProduct.setOnClickListener {
             if (hasNoPermissions()) {
                 requestPermission()
-            }
-            else
+            } else
                 takePhoto()
         }
 
@@ -78,14 +107,17 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
     val permissions = arrayOf(android.Manifest.permission.CAMERA)
 //    val permissions = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
 
-    private fun hasNoPermissions(): Boolean{
+    private fun hasNoPermissions(): Boolean {
         if (context == null)
             return false
-        return ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.CAMERA
+        ) != PackageManager.PERMISSION_GRANTED
     }
 
-    fun requestPermission(){
-        ActivityCompat.requestPermissions(context as Activity, permissions,0)
+    fun requestPermission() {
+        ActivityCompat.requestPermissions(context as Activity, permissions, 0)
     }
 
 

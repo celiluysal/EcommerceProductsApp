@@ -27,12 +27,18 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
     }
 
     private fun setBottomNavBarVisibility(){
-        keyboardSizeListener()
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.productDetailFragment) {
-                binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
-            } else {
-                binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
+            when (destination.id) {
+                R.id.productDetailFragment -> {
+                    binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
+                }
+                R.id.addProductFragment -> {
+                    binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
+                    keyboardSizeListener()
+                }
+                else -> {
+                    binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
+                }
             }
         }
     }

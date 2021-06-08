@@ -11,10 +11,11 @@ import com.bumptech.glide.Glide
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductDetailFragmentBinding
+import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 
 class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, ProductDetailViewModel>() {
 
-    val args: ProductDetailFragmentArgs by navArgs()
+    private val args: ProductDetailFragmentArgs by navArgs()
 
     companion object {
         fun newInstance() = ProductDetailFragment()
@@ -29,7 +30,9 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
 
         binding.textViewProductName.text = args.product.name
         binding.textViewProductDetail.text = args.product.description
-        binding.textViewProductCategory.text = args.product.categoryId.toString()
+        SessionManager.shared.getCategoryName(args.product.categoryId) {categoryName, error ->
+            binding.textViewProductCategory.text = categoryName
+        }
         binding.textViewProductPrice.text = "${args.product.price} ₺"
 
         Glide.with(binding.root).load(args.product.imageUrl)

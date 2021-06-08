@@ -25,4 +25,8 @@
     <string name="product_name">Ürün Adı</string>
     <string name="product_description">Ürün Açıklaması</string>
     <string name="price">Fiyat</string>
+    <string name="all_products">Tüm Ürünler</string>
+    <string name="no">Hayır</string>
+    <string name="yes">Evet</string>
+    <string name="okay">Tamam</string>
 </resources>

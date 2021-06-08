@@ -1,7 +1,10 @@
 package com.celiluysal.ecommerceproductsapp.models
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class Product(
     var id: String,
     var name: String,
@@ -10,7 +13,7 @@ data class Product(
     var imageUrl: String,
     var categoryId: String,
     var price: Double
-) : Serializable {
+) : Parcelable {
     fun toDict(): HashMap<*, *> {
         return hashMapOf(
             "id" to id,

@@ -8,29 +8,31 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.databinding.ItemProductCardBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 
-class ProductsRecyclerViewAdapter(val products: MutableList<Product>, val clickListener: ProductAdapterClickListener):
+class ProductsRecyclerViewAdapter(
+    private val products: MutableList<Product>,
+    private val clickListener: ProductAdapterClickListener
+) :
     RecyclerView.Adapter<ProductsRecyclerViewAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(val binding: ItemProductCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-            fun bind(product: Product, action: ProductAdapterClickListener) {
+        fun bind(product: Product, action: ProductAdapterClickListener) {
 
-                binding.textViewProductName.text = product.name
-                binding.textViewProductPrice.text = product.price.toString()
+            binding.textViewProductName.text = product.name
+            binding.textViewProductPrice.text = product.price.toString()
 
-                Glide.with(binding.root).load(product.imageUrl)
-                    .placeholder(R.drawable.place_holder)
-                    .into(binding.imageViewProduct)
+            Glide.with(binding.root).load(product.imageUrl)
+                .placeholder(R.drawable.place_holder)
+                .into(binding.imageViewProduct)
 
 
-                itemView.setOnClickListener {
-                    action.onProductCardClick(product, adapterPosition)
-                }
+            itemView.setOnClickListener {
+                action.onProductCardClick(product, adapterPosition)
             }
+        }
 
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {

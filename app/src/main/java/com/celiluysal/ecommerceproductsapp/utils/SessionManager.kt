@@ -67,7 +67,7 @@ class SessionManager {
         }
     }
 
-    private fun getCategories(Result: (categories: List<Category>) -> Unit) {
+    fun getCategories(Result: (categories: List<Category>) -> Unit) {
         if (this.categories.isNullOrEmpty())
             FirebaseManager.shared.fetchCategories {categories, error ->
                 if (categories != null) {

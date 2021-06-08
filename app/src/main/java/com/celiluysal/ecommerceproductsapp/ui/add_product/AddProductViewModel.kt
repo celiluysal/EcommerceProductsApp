@@ -25,7 +25,8 @@ class AddProductViewModel : ViewModel() {
 //    }
 
     fun addProduct(
-        request: ProductRequestModel
+        request: ProductRequestModel,
+        Result: ((product: Product?, error: String?) -> Unit)
     ) {
         val productId = UUID.randomUUID().toString()
         FirebaseManager.shared.uploadPhoto(productId, request.photo) {photoUrl, error ->
@@ -41,7 +42,9 @@ class AddProductViewModel : ViewModel() {
                 )
                 FirebaseManager.shared.addProduct(product) { success, error ->
                     if (success)
-                        product
+                        Result.invoke(product, null)
+                    else
+                        Result.invoke(null, error)
                 }
             }
 

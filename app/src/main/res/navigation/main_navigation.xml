@@ -30,6 +30,10 @@
         android:id="@+id/action_to_productDetailFragment"
         app:destination="@+id/productDetailFragment">
     </action>
+    <action
+        android:id="@+id/action_to_productsListFragment"
+        app:destination="@+id/productsListFragment">
+    </action>
 
     <fragment
         android:id="@+id/productDetailFragment"
@@ -39,5 +43,16 @@
         <argument
             android:name="product"
             app:argType="com.celiluysal.ecommerceproductsapp.models.Product" />
+    </fragment>
+    <fragment
+        android:id="@+id/productsListFragment"
+        android:name="com.celiluysal.ecommerceproductsapp.ui.products_list.ProductsListFragment"
+        android:label="products_list_fragment"
+        tools:layout="@layout/products_list_fragment">
+
+        <argument
+            android:name="categoryId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

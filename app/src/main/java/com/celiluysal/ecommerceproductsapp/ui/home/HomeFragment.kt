@@ -11,14 +11,13 @@ import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.HomeFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
+import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 
 class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
 
     companion object {
         fun newInstance() = HomeFragment()
     }
-
-    private lateinit var productsRecyclerViewAdapter: ProductsRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,29 +26,10 @@ class HomeFragment : BaseFragment<HomeFragmentBinding, HomeViewModel>() {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        viewModel.fetchProductOrderByPrice()
-
-        observeViewModel()
-
-        binding.recyclerViewProducts.layoutManager = GridLayoutManager(activity, 3)
-
+        findNavController().navigate(MainNavigationDirections.actionToProductsListFragment(null))
 
         return binding.root
     }
-
-    private fun observeViewModel() {
-        viewModel.products.observe(viewLifecycleOwner, { products ->
-            productsRecyclerViewAdapter = ProductsRecyclerViewAdapter(
-                products,
-                object : ProductsRecyclerViewAdapter.ProductAdapterClickListener {
-                    override fun onProductCardClick(item: Product, position: Int) {
-                        findNavController().navigate(MainNavigationDirections.actionToProductDetailFragment(item))
-                    }
-                })
-            binding.recyclerViewProducts.adapter = productsRecyclerViewAdapter
-        })
-    }
-
 
     override fun getViewBinding(
         inflater: LayoutInflater,
