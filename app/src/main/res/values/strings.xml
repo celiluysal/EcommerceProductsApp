@@ -29,4 +29,6 @@
     <string name="no">Hayır</string>
     <string name="yes">Evet</string>
     <string name="okay">Tamam</string>
+    <string name="edit">Düzenle</string>
+    <string name="delete">Sil</string>
 </resources>

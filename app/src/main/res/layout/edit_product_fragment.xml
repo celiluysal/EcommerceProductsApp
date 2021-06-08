@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/screen_background"
-    tools:context=".ui.add_product.AddProductFragment">
+    tools:context=".ui.edit_product.EditProductFragment">
 
     <include
         android:id="@+id/includeProductFields"

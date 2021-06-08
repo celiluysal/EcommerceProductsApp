@@ -32,8 +32,8 @@ class FirebaseManager {
 
     private val auth = Firebase.auth
 
-    fun observeCategoriesChild(){
-        categoriesRef.addValueEventListener(object :ValueEventListener{
+    fun observeCategoriesChild() {
+        categoriesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 SessionManager.shared.loadCategories()
             }
@@ -93,6 +93,43 @@ class FirebaseManager {
             .addOnFailureListener {
                 Result.invoke(false, it.localizedMessage)
             }
+    }
+
+    fun deleteProduct(productId: String, Result: ((success: Boolean, error: String?) -> Unit)) {
+        productsRef.child(productId).removeValue()
+            .addOnSuccessListener {
+                Result.invoke(true, null)
+            }
+            .addOnFailureListener {
+                Result.invoke(false, it.localizedMessage)
+            }
+    }
+
+    fun updateProduct(
+        product: Product,
+        Result: ((success: Boolean, error: String?) -> Unit)
+    ) {
+        fetchProductById(product.id) {_product, error ->
+            if (_product != null) {
+                productsRef.child(product.id).updateChildren(product.toDict().toMutableMap())
+                    .addOnSuccessListener {
+                        Result.invoke(true, null)
+                    }
+                    .addOnFailureListener {
+                        Result.invoke(false, it.localizedMessage)
+                    }
+
+//                productsRef.child(product.id).setValue(product.toDict())
+//                    .addOnSuccessListener {
+//                        Result.invoke(true, null)
+//                    }
+//                    .addOnFailureListener {
+//                        Result.invoke(false, it.localizedMessage)
+//                    }
+            } else
+                Result.invoke(false, error)
+        }
+
     }
 
     fun fetchProductsByName(

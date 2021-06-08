@@ -32,6 +32,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
                 R.id.productDetailFragment -> {
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
                 }
+                R.id.editProductFragment -> {
+                    binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
+                }
                 R.id.addProductFragment -> {
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
                     keyboardSizeListener()

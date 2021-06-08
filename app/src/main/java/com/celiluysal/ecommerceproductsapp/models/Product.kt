@@ -14,7 +14,7 @@ data class Product(
     var categoryId: String,
     var price: Double
 ) : Parcelable {
-    fun toDict(): HashMap<*, *> {
+    fun toDict(): HashMap<String, *> {
         return hashMapOf(
             "id" to id,
             "name" to name,

@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/screen_background"
     tools:context=".ui.product_detail.ProductDetailFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
         android:layout_margin="8dp"
-        app:cardBackgroundColor="@color/card_background">
+        app:cardBackgroundColor="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -44,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
-                    android:maxLines="1"
                     android:ellipsize="end"
                     android:text="product name"
                     android:textSize="30sp"
@@ -100,6 +101,44 @@
                     android:visibility="gone"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/white"
+        android:layout_below="@+id/cardViewProduct">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit"
+                style="@style/button_corner"
+                android:layout_marginEnd="18dp"
+                android:backgroundTint="@color/warning"/>
+
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                style="@style/button_corner"
+                android:layout_marginEnd="18dp"
+                android:backgroundTint="@color/danger"/>
+
+        </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

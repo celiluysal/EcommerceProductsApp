@@ -6,8 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductDetailFragmentBinding
@@ -30,7 +32,7 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
 
         binding.textViewProductName.text = args.product.name
         binding.textViewProductDetail.text = args.product.description
-        SessionManager.shared.getCategoryName(args.product.categoryId) {categoryName, error ->
+        SessionManager.shared.getCategoryName(args.product.categoryId) { categoryName, error ->
             binding.textViewProductCategory.text = categoryName
         }
         binding.textViewProductPrice.text = "${args.product.price} ₺"
@@ -38,6 +40,23 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
         Glide.with(binding.root).load(args.product.imageUrl)
             .placeholder(R.drawable.place_holder)
             .into(binding.imageViewProduct)
+
+        binding.buttonEdit.setOnClickListener {
+            findNavController().navigate(
+                ProductDetailFragmentDirections.actionProductDetailFragmentToEditProductFragment(
+                    args.product
+                )
+            )
+        }
+
+        binding.buttonDelete.setOnClickListener {
+            viewModel.deleteProduct(args.product.id) { success, error ->
+                if (success)
+                    activity?.onBackPressed()
+
+            }
+
+        }
 
 
 
