@@ -13,6 +13,7 @@ import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductDetailFragmentBinding
+import com.celiluysal.ecommerceproductsapp.ui.MainActivity
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 
 class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, ProductDetailViewModel>() {
@@ -29,6 +30,8 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ProductDetailViewModel::class.java)
+
+        (activity as MainActivity).toolbarBackIconVisibility(true)
 
         binding.textViewProductName.text = args.product.name
         binding.textViewProductDetail.text = args.product.description
@@ -69,6 +72,11 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
         container: ViewGroup?
     ): ProductDetailFragmentBinding {
         return ProductDetailFragmentBinding.inflate(inflater, container, false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).toolbarBackIconVisibility(false)
     }
 
 }

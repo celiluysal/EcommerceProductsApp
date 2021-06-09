@@ -14,6 +14,7 @@ import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductsListFragmentBinding
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.models.Product
+import com.celiluysal.ecommerceproductsapp.ui.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.home.ProductsRecyclerViewAdapter
 import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
@@ -27,7 +28,7 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     }
 
     private lateinit var productsRecyclerViewAdapter: ProductsRecyclerViewAdapter
-    private lateinit var loadingDialog: LoadingDialog
+//    private lateinit var loadingDialog: LoadingDialog
 
 
     override fun onCreateView(
@@ -40,10 +41,13 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         val categoryId = args.categoryId
 
         viewModel.fetchProductOrderByPrice(categoryId)
-        loadingDialog = LoadingDialog()
-        activity?.supportFragmentManager?.let {
-            loadingDialog.show(it, "LoadingDialog")
-        }
+//        loadingDialog = LoadingDialog()
+//        activity?.supportFragmentManager?.let {
+//            loadingDialog.show(it, "LoadingDialog")
+//        }
+
+        startLoading()
+
         observeViewModel()
 
         if (categoryId == null)
@@ -51,6 +55,7 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         else
             SessionManager.shared.getCategoryName(categoryId) { categoryName, error ->
                 binding.textViewListContent.text = categoryName
+                (activity as MainActivity).toolbarBackIconVisibility(true)
             }
 
         binding.swipeRefreshLayoutProducts.setOnRefreshListener {
@@ -64,7 +69,8 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     private fun observeViewModel() {
         viewModel.products.observe(viewLifecycleOwner, { products ->
             binding.swipeRefreshLayoutProducts.isRefreshing = false
-            loadingDialog.dismiss()
+//            loadingDialog.dismiss()
+            stopLoading()
             productsRecyclerViewAdapter = ProductsRecyclerViewAdapter(
                 products,
                 object : ProductsRecyclerViewAdapter.ProductAdapterClickListener {
@@ -89,6 +95,11 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
 
     interface ProductsListFragmentListener {
         fun onProductRefreshListener()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).toolbarBackIconVisibility(false)
     }
 
 }

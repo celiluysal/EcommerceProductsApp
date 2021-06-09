@@ -24,6 +24,7 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.EditProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
+import com.celiluysal.ecommerceproductsapp.ui.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.ui.product_detail.ProductDetailFragmentArgs
@@ -51,6 +52,7 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         viewModel = ViewModelProvider(this).get(EditProductViewModel::class.java)
 
         setFields()
+        (activity as MainActivity).toolbarBackIconVisibility(true)
 
         binding.includeProductFields.buttonSave.setOnClickListener {
 
@@ -177,6 +179,11 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         container: ViewGroup?
     ): EditProductFragmentBinding {
         return EditProductFragmentBinding.inflate(inflater, container, false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).toolbarBackIconVisibility(true)
     }
 
 }

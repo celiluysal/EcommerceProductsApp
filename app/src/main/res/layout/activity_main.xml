@@ -6,23 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@null"
-        android:layout_alignParentTop="true"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_logo"
-            style="@style/imageview_center"
-            android:padding="12dp"
-            app:tint="@color/white" />
-    </androidx.appcompat.widget.Toolbar>
+    <include
+        android:id="@+id/includeToolbar"
+        layout="@layout/toolbar_layout"/>
 
     <fragment
         android:id="@+id/fragmentMainNavHost"
@@ -30,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomNavigationViewHome"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/includeToolbar"
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_navigation" />
 

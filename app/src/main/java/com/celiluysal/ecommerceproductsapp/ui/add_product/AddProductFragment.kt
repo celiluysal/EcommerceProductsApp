@@ -10,11 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -22,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.bumptech.glide.util.Util
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
@@ -32,7 +29,6 @@ import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
 import java.io.File
-import java.util.jar.Manifest
 
 class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductViewModel>() {
 
@@ -53,7 +49,6 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
 
         setSpinnerCategory()
-
 
         binding.includeProductFields.buttonSave.setOnClickListener {
             if (checkFields()) {
@@ -105,8 +100,40 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         return binding.root
     }
 
-    val permissions = arrayOf(android.Manifest.permission.CAMERA)
-//    val permissions = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+
+    private fun checkFields(): Boolean {
+        fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+
+        when {
+            photo == null -> {
+                toast("alan boş olamaz")
+                return false
+            }
+            binding.includeProductFields.textInputEditTextProductName.text.toString().isBlank() -> {
+                toast("alan boş olamaz")
+                return false
+            }
+            binding.includeProductFields.textInputEditTextProductDescription.text.toString().isBlank() -> {
+                toast("alan boş olamaz")
+                return false
+            }
+            binding.includeProductFields.spinnerCategory.selectedItem == getString(R.string.category) -> {
+                toast("alan boş olamaz")
+                return false
+            }
+            binding.includeProductFields.textInputEditTextProductPrice.text.toString().isBlank() -> {
+                toast("alan boş olamaz")
+                return false
+            }
+            else -> {
+                val priceValue = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble()
+                price = priceValue
+            }
+        }
+        return true
+    }
+
+    private val permissions = arrayOf(android.Manifest.permission.CAMERA)
 
     private fun hasNoPermissions(): Boolean {
         if (context == null)
@@ -117,14 +144,13 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         ) != PackageManager.PERMISSION_GRANTED
     }
 
-    fun requestPermission() {
+    private fun requestPermission() {
         ActivityCompat.requestPermissions(context as Activity, permissions, 0)
     }
 
-
     private lateinit var photoFile: File
     private var photo: Bitmap? = null
-    private val PHOTO_FILE_NAME = "photo.jpeg"
+    private val photoFileName = "photo.jpeg"
 
     @SuppressLint("QueryPermissionsNeeded")
     fun takePhoto() {
@@ -134,7 +160,7 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE)
         val storageDirectory = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-        photoFile = File(storageDirectory, PHOTO_FILE_NAME)
+        photoFile = File(storageDirectory, photoFileName)
         val fileProvider = FileProvider.getUriForFile(
             requireContext(),
             "com.celiluysal.ecommerceproductsapp.fileprovider",
@@ -186,38 +212,6 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                     }
                 }
         }
-    }
-
-    private fun checkFields(): Boolean {
-        fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-        when {
-            photo == null -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductName.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductDescription.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.spinnerCategory.selectedItem == getString(R.string.category) -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductPrice.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            else -> {
-                val priceValue = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble()
-                price = priceValue
-            }
-        }
-        return true
     }
 
     override fun getViewBinding(

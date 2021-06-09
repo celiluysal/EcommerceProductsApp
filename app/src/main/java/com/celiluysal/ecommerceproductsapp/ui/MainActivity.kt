@@ -2,6 +2,7 @@ package com.celiluysal.ecommerceproductsapp.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -22,11 +23,44 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
         navController = findNavController(R.id.fragmentMainNavHost)
         binding.bottomNavigationViewHome.setupWithNavController(navController)
-        setBottomNavBarVisibility()
+        setupBottomNavBar()
+
+        binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
+        binding.includeToolbar.imageViewSearch.visibility = ImageView.GONE
+        binding.includeToolbar.imageViewBack.setOnClickListener {
+            onBackPressed()
+        }
 
     }
 
-    private fun setBottomNavBarVisibility(){
+    fun toolbarBackIconVisibility(isVisible: Boolean) {
+        binding.includeToolbar.imageViewBack.visibility = if (isVisible) ImageView.VISIBLE else ImageView.GONE
+    }
+
+//    private fun setupToolbar() {
+//        binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
+//        binding.includeToolbar.imageViewSearch.visibility = ImageView.GONE
+//
+//        navController.addOnDestinationChangedListener { _, destination, _ ->
+//            when (destination.id) {
+//                R.id.productDetailFragment -> {
+//                    binding.includeToolbar.imageViewBack.visibility = ImageView.VISIBLE
+//                }
+//                R.id.editProductFragment -> {
+//                    binding.includeToolbar.imageViewBack.visibility = ImageView.VISIBLE
+//                }
+//                else -> {
+//                    binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
+//                }
+//            }
+//        }
+//
+//        binding.includeToolbar.imageViewBack.setOnClickListener {
+//            onBackPressed()
+//        }
+//    }
+
+    private fun setupBottomNavBar(){
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.productDetailFragment -> {
