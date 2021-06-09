@@ -11,22 +11,23 @@ class RegisterViewModel : ViewModel() {
 
     val loadError = MutableLiveData<Boolean>().apply { postValue(false) }
 
-    fun register(request: RegisterRequestModel){
-        FirebaseManager.shared.register(request) {user, error ->
-            if (user != null)
-                login(request.email, request.password)
-            else
-                loadError.value = true
+    fun registerAndLogin(request: RegisterRequestModel, Result:(success:Boolean, error:String?) -> Unit) {
+        FirebaseManager.shared.register(request) {success, error ->
+            if (success == true) {
+                login(request.email, request.password, Result)
+                Result.invoke(true, error)
+            } else
+                Result.invoke(false, error)
         }
     }
 
-    private fun login(email: String, password: String) {
+    private fun login(email: String, password: String, Result:(success:Boolean, error:String?) -> Unit) {
         FirebaseManager.shared.login(email, password) { user: User?, error: String? ->
             if (user != null) {
-                loadError.postValue(false)
                 SessionManager.shared.loggedIn(user)
+                Result.invoke(true, error)
             } else {
-                loadError.value = true
+                Result.invoke(false, error)
             }
         }
     }

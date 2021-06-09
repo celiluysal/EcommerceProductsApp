@@ -1,6 +1,7 @@
 package com.celiluysal.ecommerceproductsapp.base
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
@@ -11,6 +12,7 @@ abstract class BaseActivity<VB: ViewBinding, VM: ViewModel>: AppCompatActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("BaseActivity", "onCreate")
         binding = getViewBinding()
         setContentView(binding.root)
     }

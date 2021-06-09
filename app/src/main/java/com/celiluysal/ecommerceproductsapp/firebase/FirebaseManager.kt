@@ -219,7 +219,7 @@ class FirebaseManager {
 
     fun register(
         request: RegisterRequestModel,
-        Result: (user: User?, error: String?) -> Unit
+        Result: (success: Boolean?, error: String?) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(request.email, request.password)
             .addOnSuccessListener {
@@ -231,13 +231,13 @@ class FirebaseManager {
                                 fullName = request.fullName,
                                 email = request.email
                             )
-                            Result.invoke(user, null)
-                        } else Result.invoke(null, error)
+                        }
+                        Result.invoke(success, error)
                     }
                 }
             }
             .addOnFailureListener {
-                Result.invoke(null, it.localizedMessage)
+                Result.invoke(false, it.localizedMessage)
             }
     }
 

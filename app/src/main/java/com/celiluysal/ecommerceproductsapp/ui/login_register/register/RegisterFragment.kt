@@ -3,18 +3,19 @@ package com.celiluysal.ecommerceproductsapp.ui.login_register.register
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.RegisterFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.RegisterRequestModel
-import com.celiluysal.ecommerceproductsapp.ui.MainActivity
+import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
+import com.celiluysal.ecommerceproductsapp.utils.isAgainPassword
+import com.celiluysal.ecommerceproductsapp.utils.isEmail
+import com.celiluysal.ecommerceproductsapp.utils.isEmpty
+import com.celiluysal.ecommerceproductsapp.utils.isPassword
 
 class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel>() {
 
@@ -29,26 +30,48 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
+        initSimpleMessageDialog()
+
         binding.buttonRegister.setOnClickListener {
-            if (checkFields()) {
-                viewModel.register(
-                    RegisterRequestModel(
-                        fullName = binding.textInputEditTextFullName.text.toString(),
-                        email = binding.textInputEditTextEmail.text.toString(),
-                        password = binding.textInputEditTextPassword.text.toString(),
-                    )
+            binding.textInputEditTextFullName.isEmpty(context)?.let {
+                showMessageDialog(getString(R.string.full_name) + " " + it)
+                return@setOnClickListener
+            }
+
+            binding.textInputEditTextEmail.isEmail(context)?.let {
+                showMessageDialog(getString(R.string.email) + " " + it)
+                return@setOnClickListener
+            }
+
+            binding.textInputEditTextPassword.isPassword(context)?.let {
+                showMessageDialog(getString(R.string.password) + " " + it)
+                return@setOnClickListener
+            }
+
+            binding.textInputEditTextPasswordAgain.isAgainPassword(
+                context,
+                binding.textInputEditTextPassword.text.toString()
+            )?.let {
+                showMessageDialog(getString(R.string.password) + " " + it)
+                return@setOnClickListener
+            }
+
+            showLoading()
+            viewModel.registerAndLogin(
+                RegisterRequestModel(
+                    fullName = binding.textInputEditTextFullName.text.toString(),
+                    email = binding.textInputEditTextEmail.text.toString(),
+                    password = binding.textInputEditTextPassword.text.toString(),
                 )
-
-                viewModel.loadError.observe(viewLifecycleOwner, { loadError ->
-                    if (!loadError) {
-                        Log.e("RegisterActivity", "login")
-                        activity?.let {
-                            startActivity(Intent(it, MainActivity::class.java))
-                            it.finish()
-                        }
-
+            ) { success, error ->
+                dismissLoading()
+                if (success) {
+                    activity?.let {
+                        startActivity(Intent(it, MainActivity::class.java))
+                        it.finish()
                     }
-                })
+                } else
+                    error?.let { showMessageDialog(it) }
             }
         }
 
@@ -65,52 +88,4 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
     ): RegisterFragmentBinding {
         return RegisterFragmentBinding.inflate(inflater, container, false)
     }
-
-    private fun checkFields(): Boolean {
-        fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-        when {
-            binding.textInputEditTextFullName.text.toString().isNullOrBlank() -> {
-                toast(getString(R.string.full_name) + " " + getString(R.string.field_cant_be_empty))
-                return false
-            }
-            else -> {
-                when {
-                    binding.textInputEditTextEmail.text.toString().isNullOrBlank() -> {
-                        toast(getString(R.string.email) + " " + getString(R.string.field_cant_be_empty))
-                        return false
-                    }
-                    !Patterns.EMAIL_ADDRESS.matcher(binding.textInputEditTextEmail.text.toString())
-                        .matches() -> {
-                        toast(getString(R.string.wrong_email_type))
-                        return false
-                    }
-                    binding.textInputEditTextPassword.text.toString().isNullOrBlank() -> {
-                        toast(getString(R.string.password) + " " + getString(R.string.field_cant_be_empty))
-                        return false
-                    }
-                    else -> {
-                        when {
-                            binding.textInputEditTextPassword.text.toString().length < 6 -> {
-                                toast(getString(R.string.short_password))
-                                return false
-                            }
-                            binding.textInputEditTextPassword.text.toString().length > 18 -> {
-                                toast(getString(R.string.long_password))
-                                return false
-                            }
-                            binding.textInputEditTextPassword.text.toString() != binding.textInputEditTextPasswordAgain.text.toString() -> {
-                                toast(getString(R.string.did_not_match_passwords))
-                                return false
-                            }
-                        }
-                    }
-                }
-
-                return true
-            }
-        }
-
-    }
-
 }

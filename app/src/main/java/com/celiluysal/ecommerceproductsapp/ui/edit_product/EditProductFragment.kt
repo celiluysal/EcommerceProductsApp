@@ -1,22 +1,13 @@
 package com.celiluysal.ecommerceproductsapp.ui.edit_product
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -24,20 +15,16 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.EditProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
-import com.celiluysal.ecommerceproductsapp.ui.MainActivity
-import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
+import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.ui.product_detail.ProductDetailFragmentArgs
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
 import kotlinx.android.synthetic.main.dialog_loading.*
-import java.io.File
 
 class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProductViewModel>() {
 
     private var price: Double? = null
-    private lateinit var messageDialog: MessageDialog
-    private lateinit var loadingDialog: LoadingDialog
     private val args: ProductDetailFragmentArgs by navArgs()
 
     companion object {
@@ -68,38 +55,29 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                     updateDate = Utils.shared.dayTimeStamp()
                 )
 
-                loadingDialog = LoadingDialog()
-                activity?.supportFragmentManager?.let {
-                    loadingDialog.show(it, "LoadingDialog")
-                }
+                showLoading()
 
                 viewModel.updateProduct(p) {success, error ->
-                    loadingDialog.dismiss()
+                    dismissLoading()
                     if (success) {
-                        messageDialog = MessageDialog("Ürün başarıyla eklendi.",
+                        messageDialog = MessageDialog(
                             object : MessageDialog.MessageDialogListener {
                                 override fun onLeftButtonClick() {
-                                    messageDialog.dismiss()
+                                    messageDialog?.dismiss()
                                     binding.includeProductFields.textInputEditTextProductName.text?.clear()
                                     binding.includeProductFields.textInputEditTextProductDescription.text?.clear()
                                     binding.includeProductFields.textInputEditTextProductPrice.text?.clear()
                                     binding.includeProductFields.imageViewProduct.setImageResource(R.drawable.im_take_photo)
                                 }
                             })
-                        messageDialog.leftButtonText = getString(R.string.okay)
-                        activity?.supportFragmentManager?.let {
-                            messageDialog.show(
-                                it,
-                                "MessageDialog"
-                            )
-                        }
+                        messageDialog?.leftButtonText = getString(R.string.okay)
+                        showMessageDialog("Ürün başarıyla eklendi.")
                     }
                     findNavController().navigate(EditProductFragmentDirections.actionEditProductFragmentToProductDetailFragment(p))
 
                 }
             }
 
-//            findNavController().navigate(EditProductFragmentDirections.actionEditProductFragmentToProductDetailFragment(args.product))
         }
 
         return binding.root

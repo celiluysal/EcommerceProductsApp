@@ -1,4 +1,4 @@
-package com.celiluysal.ecommerceproductsapp.ui
+package com.celiluysal.ecommerceproductsapp.ui.main
 
 import android.os.Bundle
 import android.util.Log
@@ -20,45 +20,47 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("MainActivity", "onCreate")
 
         navController = findNavController(R.id.fragmentMainNavHost)
         binding.bottomNavigationViewHome.setupWithNavController(navController)
         setupBottomNavBar()
 
         binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
-        binding.includeToolbar.imageViewSearch.visibility = ImageView.GONE
+        binding.includeToolbar.imageViewRight.visibility = ImageView.GONE
         binding.includeToolbar.imageViewBack.setOnClickListener {
             onBackPressed()
         }
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.e("MainActivity", "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("MainActivity", "onResume")
+    }
+
+    fun toolbarRightIconVisibility(isVisible: Boolean) {
+        binding.includeToolbar.imageViewRight.visibility = if (isVisible) ImageView.VISIBLE else ImageView.GONE
+    }
+
+    fun toolbarRightIconDrawable(resId: Int) {
+        binding.includeToolbar.imageViewRight.setImageResource(resId)
+    }
+
+    fun toolbarRightIconClickListener(onClick:()->Unit) {
+        binding.includeToolbar.imageViewRight.setOnClickListener {
+            onClick.invoke()
+        }
+    }
+
     fun toolbarBackIconVisibility(isVisible: Boolean) {
         binding.includeToolbar.imageViewBack.visibility = if (isVisible) ImageView.VISIBLE else ImageView.GONE
     }
-
-//    private fun setupToolbar() {
-//        binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
-//        binding.includeToolbar.imageViewSearch.visibility = ImageView.GONE
-//
-//        navController.addOnDestinationChangedListener { _, destination, _ ->
-//            when (destination.id) {
-//                R.id.productDetailFragment -> {
-//                    binding.includeToolbar.imageViewBack.visibility = ImageView.VISIBLE
-//                }
-//                R.id.editProductFragment -> {
-//                    binding.includeToolbar.imageViewBack.visibility = ImageView.VISIBLE
-//                }
-//                else -> {
-//                    binding.includeToolbar.imageViewBack.visibility = ImageView.GONE
-//                }
-//            }
-//        }
-//
-//        binding.includeToolbar.imageViewBack.setOnClickListener {
-//            onBackPressed()
-//        }
-//    }
 
     private fun setupBottomNavBar(){
         navController.addOnDestinationChangedListener { _, destination, _ ->

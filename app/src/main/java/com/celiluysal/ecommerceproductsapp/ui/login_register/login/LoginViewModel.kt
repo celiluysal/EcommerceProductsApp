@@ -4,16 +4,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import java.lang.Error
 
 class LoginViewModel : ViewModel() {
-    val loggedIn = MutableLiveData<Boolean>().apply { postValue(false) }
-
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String,  Result:(success:Boolean, error:String?) -> Unit) {
         FirebaseManager.shared.login(email, password) { user, error ->
             if (user != null) {
                 SessionManager.shared.loggedIn(user)
-                loggedIn.value = true
-            }
+                Result.invoke(true, error)
+            } else
+                Result.invoke(false ,error)
         }
     }
 }

@@ -34,7 +34,7 @@
         </activity>
 
         <activity android:name=".ui.login_register.LoginRegisterActivity" />
-        <activity android:name=".ui.MainActivity"/>
+        <activity android:name=".ui.main.MainActivity"/>
     </application>
 
 </manifest>

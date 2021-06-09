@@ -12,11 +12,9 @@ import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductsListFragmentBinding
-import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.models.Product
-import com.celiluysal.ecommerceproductsapp.ui.MainActivity
+import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.home.ProductsRecyclerViewAdapter
-import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 
 class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsListViewModel>() {
@@ -28,7 +26,6 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     }
 
     private lateinit var productsRecyclerViewAdapter: ProductsRecyclerViewAdapter
-//    private lateinit var loadingDialog: LoadingDialog
 
 
     override fun onCreateView(
@@ -41,12 +38,8 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         val categoryId = args.categoryId
 
         viewModel.fetchProductOrderByPrice(categoryId)
-//        loadingDialog = LoadingDialog()
-//        activity?.supportFragmentManager?.let {
-//            loadingDialog.show(it, "LoadingDialog")
-//        }
 
-        startLoading()
+        showLoading()
 
         observeViewModel()
 
@@ -69,8 +62,7 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     private fun observeViewModel() {
         viewModel.products.observe(viewLifecycleOwner, { products ->
             binding.swipeRefreshLayoutProducts.isRefreshing = false
-//            loadingDialog.dismiss()
-            stopLoading()
+            dismissLoading()
             productsRecyclerViewAdapter = ProductsRecyclerViewAdapter(
                 products,
                 object : ProductsRecyclerViewAdapter.ProductAdapterClickListener {

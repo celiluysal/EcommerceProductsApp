@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
+import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
+import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 
 abstract class BaseFragment<VB: ViewBinding, VM: ViewModel>: Fragment() {
     protected lateinit var binding: VB
     lateinit var viewModel: VM
-    private lateinit var loadingDialog: LoadingDialog
 
+    var messageDialog: MessageDialog? = null
+    private lateinit var loadingDialog: LoadingDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,14 +29,35 @@ abstract class BaseFragment<VB: ViewBinding, VM: ViewModel>: Fragment() {
 
     protected abstract fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
-    fun startLoading() {
+    fun initSimpleMessageDialog() {
+        messageDialog = MessageDialog(
+            object : MessageDialog.MessageDialogListener {
+                override fun onLeftButtonClick() {
+                    messageDialog?.dismiss()
+                }
+            })
+        messageDialog?.leftButtonText = getString(R.string.okay)
+        messageDialog?.rightButtonText = null
+    }
+
+    fun showMessageDialog(message: String) {
+        messageDialog?.setMessage(message)
+        activity?.supportFragmentManager?.let {
+            messageDialog?.show(
+                it,
+                "MessageDialog"
+            )
+        }
+    }
+
+    fun showLoading() {
         loadingDialog = LoadingDialog()
         activity?.supportFragmentManager?.let {
             loadingDialog.show(it, "LoadingDialog")
         }
     }
 
-    fun stopLoading() {
+    fun dismissLoading() {
         loadingDialog.dismiss()
     }
 

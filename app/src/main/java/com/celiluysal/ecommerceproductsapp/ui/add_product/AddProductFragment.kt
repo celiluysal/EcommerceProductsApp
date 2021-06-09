@@ -24,10 +24,10 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
-import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
+import com.celiluysal.ecommerceproductsapp.utils.isEmpty
 import java.io.File
 
 class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductViewModel>() {
@@ -37,9 +37,6 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
     }
 
     private var price: Double? = null
-    private lateinit var messageDialog: MessageDialog
-    private lateinit var loadingDialog: LoadingDialog
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,45 +46,54 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
 
         setSpinnerCategory()
+        initSimpleMessageDialog()
 
         binding.includeProductFields.buttonSave.setOnClickListener {
-            if (checkFields()) {
-                loadingDialog = LoadingDialog()
-                activity?.supportFragmentManager?.let {
-                    loadingDialog.show(it, "LoadingDialog")
-                }
-                viewModel.addProduct(
-                    ProductRequestModel(
-                        name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
-                        description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
-                        categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
-                        price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
-                        photo = this.photo!!
-                    )
-                ) { product, error ->
-                    loadingDialog.dismiss()
-                    if (product != null) {
-                        messageDialog = MessageDialog("Ürün başarıyla eklendi.",
-                            object : MessageDialog.MessageDialogListener {
-                                override fun onLeftButtonClick() {
-                                    messageDialog.dismiss()
-                                    binding.includeProductFields.textInputEditTextProductName.text?.clear()
-                                    binding.includeProductFields.textInputEditTextProductDescription.text?.clear()
-                                    binding.includeProductFields.textInputEditTextProductPrice.text?.clear()
-                                    binding.includeProductFields.imageViewProduct.setImageResource(R.drawable.im_take_photo)
-                                }
-                            })
-                        messageDialog.leftButtonText = getString(R.string.okay)
-                        activity?.supportFragmentManager?.let {
-                            messageDialog.show(
-                                it,
-                                "MessageDialog"
-                            )
-                        }
-                    }
-                }
-
+            binding.includeProductFields.textInputEditTextProductName.isEmpty(context)?.let {
+                showMessageDialog(getString(R.string.product_name) + " " + it)
+                return@setOnClickListener
             }
+
+            binding.includeProductFields.textInputEditTextProductDescription.isEmpty(context)?.let {
+                showMessageDialog(getString(R.string.product_description) + " " + getString(R.string.field_cant_be_empty))
+                return@setOnClickListener
+            }
+
+            binding.includeProductFields.textInputEditTextProductPrice.isEmpty(context)?.let {
+                showMessageDialog(getString(R.string.price) + " " + getString(R.string.field_cant_be_empty))
+                return@setOnClickListener
+            }
+
+            if (photo == null) {
+                showMessageDialog(getString(R.string.product_photo) + " " + getString(R.string.field_cant_be_empty))
+                return@setOnClickListener
+            }
+
+            showLoading()
+            viewModel.addProduct(
+                ProductRequestModel(
+                    name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
+                    description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
+                    categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
+                    price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
+                    photo = this.photo!!
+                )
+            ) { product, error ->
+                dismissLoading()
+                if (product != null) {
+                    messageDialog = MessageDialog(
+                        object : MessageDialog.MessageDialogListener {
+                            override fun onLeftButtonClick() {
+                                clearFields()
+                                messageDialog?.dismiss()
+                            }
+                        })
+                    messageDialog?.leftButtonText = getString(R.string.okay)
+                    showMessageDialog(getString(R.string.add_product_success))
+                }
+            }
+
+
         }
 
         binding.includeProductFields.imageViewProduct.setOnClickListener {
@@ -100,41 +106,14 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         return binding.root
     }
 
-
-    private fun checkFields(): Boolean {
-        fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-        when {
-            photo == null -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductName.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductDescription.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.spinnerCategory.selectedItem == getString(R.string.category) -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            binding.includeProductFields.textInputEditTextProductPrice.text.toString().isBlank() -> {
-                toast("alan boş olamaz")
-                return false
-            }
-            else -> {
-                val priceValue = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble()
-                price = priceValue
-            }
-        }
-        return true
+    fun clearFields() {
+        binding.includeProductFields.textInputEditTextProductName.text?.clear()
+        binding.includeProductFields.textInputEditTextProductDescription.text?.clear()
+        binding.includeProductFields.textInputEditTextProductPrice.text?.clear()
+        binding.includeProductFields.imageViewProduct.setImageResource(R.drawable.im_take_photo)
     }
 
     private val permissions = arrayOf(android.Manifest.permission.CAMERA)
-
     private fun hasNoPermissions(): Boolean {
         if (context == null)
             return false
@@ -207,7 +186,8 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                         if (categoryNameList[p2] != getString(R.string.category)) {
                             binding.includeProductFields.textInputEditTextSpinnerCategory.setText(" ")
-                            binding.includeProductFields.textInputSpinnerCategory.hint = getString(R.string.category)
+                            binding.includeProductFields.textInputSpinnerCategory.hint =
+                                getString(R.string.category)
                         }
                     }
                 }

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
-import com.celiluysal.ecommerceproductsapp.ui.MainActivity
+import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.login_register.LoginRegisterActivity
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 

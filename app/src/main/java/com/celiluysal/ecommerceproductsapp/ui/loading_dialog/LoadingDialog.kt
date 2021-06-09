@@ -18,6 +18,7 @@ class LoadingDialog(): DialogFragment() {
     ): View {
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         binding = DialogLoadingBinding.inflate(layoutInflater)
+        dialog?.setCanceledOnTouchOutside(false)
 
         return binding.root
     }
