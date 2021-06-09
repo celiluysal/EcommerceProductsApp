@@ -2,6 +2,7 @@ package com.celiluysal.ecommerceproductsapp.ui.products_list
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,8 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
+        Log.e("ProductsListFragment", "onCreateView")
+
         viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
 
         val categoryId = args.categoryId

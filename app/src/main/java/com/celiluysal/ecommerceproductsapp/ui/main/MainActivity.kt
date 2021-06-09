@@ -2,6 +2,7 @@ package com.celiluysal.ecommerceproductsapp.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -20,8 +21,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("MainActivity", "onCreate")
-
         navController = findNavController(R.id.fragmentMainNavHost)
         binding.bottomNavigationViewHome.setupWithNavController(navController)
         setupBottomNavBar()
@@ -34,16 +33,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.e("MainActivity", "onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.e("MainActivity", "onResume")
-    }
-
     fun toolbarRightIconVisibility(isVisible: Boolean) {
         binding.includeToolbar.imageViewRight.visibility = if (isVisible) ImageView.VISIBLE else ImageView.GONE
     }
@@ -54,6 +43,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
     fun toolbarRightIconClickListener(onClick:()->Unit) {
         binding.includeToolbar.imageViewRight.setOnClickListener {
+            Log.e("MainActivity", "toolbarRightIconClickListener")
             onClick.invoke()
         }
     }
@@ -64,16 +54,21 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
 
     private fun setupBottomNavBar(){
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.root.viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
             when (destination.id) {
                 R.id.productDetailFragment -> {
+                    Log.e("MainActivity", "productDetailFragment")
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
                 }
                 R.id.editProductFragment -> {
+                    Log.e("MainActivity", "editProductFragment")
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
                 }
                 R.id.addProductFragment -> {
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
-                    keyboardSizeListener()
+                    keyboardSizeListener {
+                        binding.bottomNavigationViewHome.visibility = if (it) BottomNavigationView.GONE else BottomNavigationView.VISIBLE
+                    }
                 }
                 else -> {
                     binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
@@ -82,15 +77,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
         }
     }
 
-    private fun keyboardSizeListener() {
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+
+    var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+
+    private fun keyboardSizeListener(Result: (isSoftKeyActive:Boolean) -> Unit) {
+
+        globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
             val heightDiff = binding.root.rootView.height - binding.root.height
-            if (heightDiff > Utils.shared.dpToPx(this, 200f)) {
-                binding.bottomNavigationViewHome.visibility = BottomNavigationView.GONE
-            } else {
-                binding.bottomNavigationViewHome.visibility = BottomNavigationView.VISIBLE
-            }
+            Log.e("MainActivity", "keyboardSizeListener")
+            Result.invoke(heightDiff > Utils.shared.dpToPx(this, 200f))
         }
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+
+
     }
 
     override fun getViewBinding(): ActivityMainBinding {
