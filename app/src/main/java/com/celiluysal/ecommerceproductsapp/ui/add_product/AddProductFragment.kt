@@ -20,10 +20,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
+import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
+import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
@@ -36,7 +40,10 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         fun newInstance() = AddProductFragment()
     }
 
-    private var price: Double? = null
+    private val args: AddProductFragmentArgs by navArgs()
+
+    private var photo: Bitmap? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +52,18 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(AddProductViewModel::class.java)
 
-        setSpinnerCategory()
+
+        if (args.product == null) {
+            setSpinnerCategory(null)
+        } else {
+            setSpinnerCategory(args.product!!.categoryId)
+            (activity as MainActivity).bottomNavBarVisibility(false)
+        }
+
+        args.product?.let { setFields(it) }
+
         initSimpleMessageDialog()
+
 
         binding.includeProductFields.buttonSave.setOnClickListener {
             binding.includeProductFields.textInputEditTextProductName.isEmpty(context)?.let {
@@ -75,7 +92,8 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                     name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
                     description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
                     categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
-                    price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
+                    price = binding.includeProductFields.textInputEditTextProductPrice.text.toString()
+                        .toDouble(),
                     photo = this.photo!!
                 )
             ) { product, error ->
@@ -103,6 +121,8 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                 takePhoto()
         }
 
+
+
         return binding.root
     }
 
@@ -111,6 +131,16 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
         binding.includeProductFields.textInputEditTextProductDescription.text?.clear()
         binding.includeProductFields.textInputEditTextProductPrice.text?.clear()
         binding.includeProductFields.imageViewProduct.setImageResource(R.drawable.im_take_photo)
+    }
+
+    private fun setFields(product: Product) {
+        binding.includeProductFields.textInputEditTextProductName.setText(product.name)
+        binding.includeProductFields.textInputEditTextProductDescription.setText(product.description)
+        setSpinnerCategory(product.categoryId)
+        binding.includeProductFields.textInputEditTextProductPrice.setText(product.price.toString())
+        Glide.with(binding.root).load(product.imageUrl)
+            .placeholder(R.drawable.place_holder)
+            .into(binding.includeProductFields.imageViewProduct)
     }
 
     private val permissions = arrayOf(android.Manifest.permission.CAMERA)
@@ -128,7 +158,6 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
     }
 
     private lateinit var photoFile: File
-    private var photo: Bitmap? = null
     private val photoFileName = "photo.jpeg"
 
     @SuppressLint("QueryPermissionsNeeded")
@@ -157,8 +186,6 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                // There are no request codes
-                val data: Intent? = result.data
                 var photo = BitmapFactory.decodeFile(photoFile.absolutePath)
                 photo = Utils.shared.originalRotate(photo, photoFile)
                 photo = Utils.shared.resizeBitmap(photo, 1024)
@@ -168,7 +195,7 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
             }
         }
 
-    private fun setSpinnerCategory() {
+    private fun setSpinnerCategory(categoryId: String?) {
         SessionManager.shared.getCategoryNameList { categoryNameList ->
             binding.includeProductFields.spinnerCategory.adapter =
                 context?.let {
@@ -179,6 +206,7 @@ class AddProductFragment : BaseFragment<AddProductFragmentBinding, AddProductVie
                     )
                 }
             binding.includeProductFields.spinnerCategory.bringToFront()
+            categoryId?.let { binding.includeProductFields.spinnerCategory.setSelection(it.toInt()) }
             binding.includeProductFields.spinnerCategory.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onNothingSelected(p0: AdapterView<*>?) {}

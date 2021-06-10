@@ -44,11 +44,11 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
             .into(binding.imageViewProduct)
 
         binding.buttonEdit.setOnClickListener {
-            findNavController().navigate(
-                ProductDetailFragmentDirections.actionProductDetailFragmentToEditProductFragment(
-                    args.product
-                )
-            )
+//            findNavController().navigate(
+//                ProductDetailFragmentDirections.actionProductDetailFragmentToAddProductFragment(
+//                    args.product
+//                )
+//            )
         }
 
         binding.buttonDelete.setOnClickListener {

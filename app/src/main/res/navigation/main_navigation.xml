@@ -19,7 +19,13 @@
         android:id="@+id/addProductFragment"
         android:name="com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragment"
         android:label="add_product_fragment"
-        tools:layout="@layout/add_product_fragment" />
+        tools:layout="@layout/add_product_fragment" >
+        <argument
+            android:name="product"
+            app:argType="com.celiluysal.ecommerceproductsapp.models.Product"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.celiluysal.ecommerceproductsapp.ui.profile.ProfileFragment"

@@ -3,7 +3,6 @@ package com.celiluysal.ecommerceproductsapp.ui.products_list
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductsListFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
-import com.celiluysal.ecommerceproductsapp.ui.home.ProductsRecyclerViewAdapter
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.SortItem
 
@@ -53,6 +51,11 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.lifecycle?.addObserver(this)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
     }
 
 

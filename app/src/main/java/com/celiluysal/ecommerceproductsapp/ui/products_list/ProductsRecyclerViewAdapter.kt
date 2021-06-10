@@ -1,4 +1,4 @@
-package com.celiluysal.ecommerceproductsapp.ui.home
+package com.celiluysal.ecommerceproductsapp.ui.products_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
