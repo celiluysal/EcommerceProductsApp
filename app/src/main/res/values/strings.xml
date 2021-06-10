@@ -16,6 +16,7 @@
     <string name="product_photo">Ürün Fotoğrafı</string>
 
     <string name="add_product_success">Ürün başarıyla eklendi.</string>
+    <string name="update_product_success">Ürün başarıyla güncellendi.</string>
     <string name="field_cant_be_empty">alanı boş olamaz</string>
     <string name="did_not_match_passwords">Şifreler aynı değil</string>
     <string name="wrong_type">tipi yanlış</string>

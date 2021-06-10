@@ -10,15 +10,35 @@ import java.util.*
 
 class EditProductViewModel : ViewModel() {
 
-    fun uploadPhoto(photo: Bitmap, Result: (photoUrl: String?, error: String?) -> Unit) {
-
+    private fun uploadPhoto(
+        productId: String,
+        photo: Bitmap,
+        Result: (photoUrl: String?, error: String?) -> Unit
+    ) {
+        FirebaseManager.shared.uploadPhoto(productId, photo, Result)
     }
 
     fun updateProduct(
         product: Product,
-        Result: ((success: Boolean, error: String?) -> Unit)
+        photo: Bitmap?,
+        Result: (product: Product?, error: String?) -> Unit
     ) {
-        FirebaseManager.shared.updateProduct(product, Result)
+        if (photo != null)
+            Result.invoke(null, "photo does not exist")
+
+        uploadPhoto(product.id, photo!!) { photoUrl, error ->
+            if (photoUrl != null) {
+                product.imageUrl = photoUrl
+                product.updateDate = Utils.shared.dateTimeStamp()
+                FirebaseManager.shared.updateProduct(product) { success, error ->
+                    if (success)
+                        Result.invoke(product, null)
+                    else
+                        Result.invoke(null, error)
+                }
+            }
+            Result.invoke(null, error)
+        }
     }
 
     fun addProduct(
@@ -26,7 +46,7 @@ class EditProductViewModel : ViewModel() {
         Result: ((product: Product?, error: String?) -> Unit)
     ) {
         val productId = UUID.randomUUID().toString()
-        FirebaseManager.shared.uploadPhoto(productId, request.photo) {photoUrl, error ->
+        uploadPhoto(productId, request.photo) { photoUrl, error ->
             if (photoUrl != null) {
                 val product = Product(
                     id = productId,

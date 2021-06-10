@@ -25,12 +25,14 @@ import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.databinding.EditProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
+import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragmentDirections
 import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductViewModel
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
@@ -133,7 +135,32 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                     }
                 }
                 ScreenType.EditProduct -> {
-
+                    showLoading()
+                    viewModel.updateProduct(
+                        Product(
+                            id = args.product!!.id,
+                            name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
+                            description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
+                            categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
+                            price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
+                            imageUrl = "",
+                            updateDate = args.product!!.updateDate
+                        ), this.photo
+                    ) { product, error ->
+                        dismissLoading()
+                        if (product != null) {
+                            messageDialog = MessageDialog(
+                                object : MessageDialog.MessageDialogListener {
+                                    override fun onLeftButtonClick() {
+                                        clearFields()
+                                        findNavController().navigate(MainNavigationDirections.actionToProductDetailFragment(product))
+                                        messageDialog?.dismiss()
+                                    }
+                                })
+                            messageDialog?.leftButtonText = getString(R.string.okay)
+                            showMessageDialog(getString(R.string.update_product_success))
+                        }
+                    }
                 }
             }
 
