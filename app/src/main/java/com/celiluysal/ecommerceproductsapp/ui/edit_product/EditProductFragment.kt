@@ -10,9 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -29,7 +31,6 @@ import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.databinding.EditProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
-import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragmentArgs
 import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductViewModel
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
@@ -46,9 +47,12 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         fun newInstance() = EditProductFragment()
     }
 
-    private val args: AddProductFragmentArgs by navArgs()
+    private val args: EditProductFragmentArgs by navArgs()
     private var photo: Bitmap? = null
 
+    private enum class ScreenType {
+        EditProduct, AddProduct
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,16 +60,26 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(EditProductViewModel::class.java)
+        val screenType: ScreenType = if (args.product == null) ScreenType.AddProduct else ScreenType.EditProduct
 
-
-        if (args.product == null) {
-            setSpinnerCategory(null)
-        } else {
-            setSpinnerCategory(args.product!!.categoryId)
-            (activity as MainActivity).bottomNavBarVisibility(false)
+        when(screenType) {
+            ScreenType.AddProduct -> {
+                setSpinnerCategory(null)
+                keyboardSizeListener { isSoftKeyActive ->
+                    (activity as MainActivity).bottomNavBarVisibility(!isSoftKeyActive)
+                }
+            }
+            ScreenType.EditProduct -> {
+                args.product?.let { product ->
+                    setSpinnerCategory(product.categoryId)
+                    setFields(product)
+                }
+                (activity as MainActivity).bottomNavBarVisibility(false)
+            }
         }
 
-        args.product?.let { setFields(it) }
+
+
 
         initSimpleMessageDialog()
 
@@ -91,30 +105,39 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                 return@setOnClickListener
             }
 
-//            showLoading()
-//            viewModel.addProduct(
-//                ProductRequestModel(
-//                    name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
-//                    description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
-//                    categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
-//                    price = binding.includeProductFields.textInputEditTextProductPrice.text.toString()
-//                        .toDouble(),
-//                    photo = this.photo!!
-//                )
-//            ) { product, error ->
-//                dismissLoading()
-//                if (product != null) {
-//                    messageDialog = MessageDialog(
-//                        object : MessageDialog.MessageDialogListener {
-//                            override fun onLeftButtonClick() {
-//                                clearFields()
-//                                messageDialog?.dismiss()
-//                            }
-//                        })
-//                    messageDialog?.leftButtonText = getString(R.string.okay)
-//                    showMessageDialog(getString(R.string.add_product_success))
-//                }
-//            }
+            when(screenType) {
+                ScreenType.AddProduct -> {
+                    showLoading()
+                    viewModel.addProduct(
+                        ProductRequestModel(
+                            name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
+                            description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
+                            categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
+                            price = binding.includeProductFields.textInputEditTextProductPrice.text.toString()
+                                .toDouble(),
+                            photo = this.photo!!
+                        )
+                    ) { product, error ->
+                        dismissLoading()
+                        if (product != null) {
+                            messageDialog = MessageDialog(
+                                object : MessageDialog.MessageDialogListener {
+                                    override fun onLeftButtonClick() {
+                                        clearFields()
+                                        messageDialog?.dismiss()
+                                    }
+                                })
+                            messageDialog?.leftButtonText = getString(R.string.okay)
+                            showMessageDialog(getString(R.string.add_product_success))
+                        }
+                    }
+                }
+                ScreenType.EditProduct -> {
+
+                }
+            }
+
+
 
 
         }
@@ -227,6 +250,20 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         }
     }
 
+    var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+
+    private fun keyboardSizeListener(Result: (isSoftKeyActive: Boolean) -> Unit) {
+        if (context == null)
+            return
+
+        globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val heightDiff = binding.root.rootView.height - binding.root.height
+            Result.invoke(heightDiff > Utils.shared.dpToPx(requireContext(), 200f))
+        }
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+
+
+    }
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -235,9 +272,10 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         return EditProductFragmentBinding.inflate(inflater, container, false)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        (activity as MainActivity).toolbarBackIconVisibility(true)
+    override fun onPause() {
+        super.onPause()
+        binding.root.viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
+        (activity as MainActivity).toolbarBackIconVisibility(false)
+        Log.e("EditProductFragment", "onPause")
     }
-
 }

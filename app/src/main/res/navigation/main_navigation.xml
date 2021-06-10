@@ -20,11 +20,9 @@
         android:name="com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragment"
         android:label="add_product_fragment"
         tools:layout="@layout/add_product_fragment" >
-        <argument
-            android:name="product"
-            app:argType="com.celiluysal.ecommerceproductsapp.models.Product"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+        <action
+            android:id="@+id/action_addProductFragment_to_editProductFragment"
+            app:destination="@id/editProductFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -71,6 +69,8 @@
         tools:layout="@layout/edit_product_fragment" >
         <argument
             android:name="product"
+            app:nullable="true"
+            android:defaultValue="@null"
             app:argType="com.celiluysal.ecommerceproductsapp.models.Product" />
         <action
             android:id="@+id/action_editProductFragment_to_productDetailFragment"

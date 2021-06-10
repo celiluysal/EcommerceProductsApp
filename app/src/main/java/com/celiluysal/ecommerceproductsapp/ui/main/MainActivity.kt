@@ -78,7 +78,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
             toolbarRightIconVisibility(false)
             bottomNavBarVisibility(true)
 
-            binding.root.viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
             when (destination.id) {
                 R.id.productsListFragment -> {
                     toolbarRightIconVisibility(true)
@@ -86,32 +85,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
                 R.id.productDetailFragment -> {
                     bottomNavBarVisibility(false)
                 }
-                R.id.editProductFragment -> {
-                    bottomNavBarVisibility(false)
+                R.id.addProductFragment -> {
+                    bottomNavBarVisibility(true)
+//                    keyboardSizeListener {
+//                        if (it) bottomNavBarVisibility(false) else bottomNavBarVisibility(true)
+//                    }
                 }
-//                R.id.addProductFragment -> {
-//                    bottomNavBarVisibility(true)
-////                    keyboardSizeListener {
-////                        if (it) bottomNavBarVisibility(false) else bottomNavBarVisibility(true)
-////                    }
-//                }
             }
         }
     }
 
 
-    var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
-
-    private fun keyboardSizeListener(Result: (isSoftKeyActive: Boolean) -> Unit) {
-
-        globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-            val heightDiff = binding.root.rootView.height - binding.root.height
-            Result.invoke(heightDiff > Utils.shared.dpToPx(this, 200f))
-        }
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 
 
-    }
 
     override fun getViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
