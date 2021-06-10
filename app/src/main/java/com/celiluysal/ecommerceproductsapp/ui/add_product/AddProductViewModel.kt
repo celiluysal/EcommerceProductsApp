@@ -1,6 +1,5 @@
 package com.celiluysal.ecommerceproductsapp.ui.add_product
 
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
@@ -35,7 +34,7 @@ class AddProductViewModel : ViewModel() {
                     id = productId,
                     name = request.name,
                     description = request.description,
-                    updateDate = Utils.shared.dayTimeStamp(),
+                    updateDate = Utils.shared.dateTimeStamp(),
                     imageUrl = photoUrl,
                     categoryId = request.categoryId,
                     price = request.price

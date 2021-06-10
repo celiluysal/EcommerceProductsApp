@@ -20,7 +20,6 @@ import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
 import com.celiluysal.ecommerceproductsapp.ui.product_detail.ProductDetailFragmentArgs
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
-import kotlinx.android.synthetic.main.dialog_loading.*
 
 class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProductViewModel>() {
 
@@ -52,7 +51,7 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                     categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
                     price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
                     imageUrl = args.product.imageUrl,
-                    updateDate = Utils.shared.dayTimeStamp()
+                    updateDate = Utils.shared.dateTimeStamp()
                 )
 
                 showLoading()

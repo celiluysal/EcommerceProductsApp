@@ -5,9 +5,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.os.Build
 import android.util.TypedValue
+import androidx.annotation.RequiresApi
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Utils {
@@ -17,7 +21,12 @@ class Utils {
     @SuppressLint("SimpleDateFormat")
     private val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
 
-    fun dayTimeStamp(): String = simpleDateFormat.format(Date())
+    fun dateTimeStamp(): String = simpleDateFormat.format(Date())
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun stringToDateTime(stringDate: String): LocalDateTime = LocalDateTime.parse(stringDate)
+
+
 
     fun dpToPx(context: Context, valueInDp: Float): Float {
         val metrics = context.resources.displayMetrics

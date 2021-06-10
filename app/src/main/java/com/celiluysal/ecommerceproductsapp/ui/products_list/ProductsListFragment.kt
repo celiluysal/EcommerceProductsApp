@@ -1,11 +1,15 @@
 package com.celiluysal.ecommerceproductsapp.ui.products_list
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,8 +21,9 @@ import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.home.ProductsRecyclerViewAdapter
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import com.celiluysal.ecommerceproductsapp.utils.SortItem
 
-class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsListViewModel>() {
+class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsListViewModel>(), LifecycleObserver {
 
     private val args: ProductsListFragmentArgs by navArgs()
 
@@ -27,6 +32,28 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     }
 
     private lateinit var productsRecyclerViewAdapter: ProductsRecyclerViewAdapter
+    private var categoryId: String? = null
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun onCreated(){
+        (activity as MainActivity).let { mainActivity ->
+            mainActivity.setupSortMenu { item ->
+                showLoading()
+                when (item.itemId) {
+                    R.id.sortByPriceDsc -> viewModel.sortItem.value = SortItem.PriceDsc
+                    R.id.sortByPriceAsc -> viewModel.sortItem.value = SortItem.PriceAsc
+                    R.id.sortByNewToOld -> viewModel.sortItem.value = SortItem.DateDsc
+                    R.id.sortByOldToNew -> viewModel.sortItem.value = SortItem.DateAsc
+                }
+            }
+        }
+        activity?.lifecycle?.removeObserver(this)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycle?.addObserver(this)
+    }
 
 
     override fun onCreateView(
@@ -34,28 +61,24 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        Log.e("ProductsListFragment", "onCreateView")
 
         viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
 
-        val categoryId = args.categoryId
-
-        viewModel.fetchProductOrderByPrice(categoryId)
+        categoryId = args.categoryId
 
         showLoading()
-
         observeViewModel()
 
         if (categoryId == null)
             binding.textViewListContent.text = getString(R.string.all_products)
         else
-            SessionManager.shared.getCategoryName(categoryId) { categoryName, error ->
+            SessionManager.shared.getCategoryName(categoryId!!) { categoryName, error ->
                 binding.textViewListContent.text = categoryName
                 (activity as MainActivity).toolbarBackIconVisibility(true)
             }
 
         binding.swipeRefreshLayoutProducts.setOnRefreshListener {
-            viewModel.fetchProductOrderByPrice(categoryId)
+            viewModel.fetchAndSortProducts(categoryId)
         }
         binding.recyclerViewProducts.layoutManager = GridLayoutManager(activity, 3)
 
@@ -63,6 +86,10 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     }
 
     private fun observeViewModel() {
+        viewModel.sortItem.observe(viewLifecycleOwner, {
+            viewModel.fetchAndSortProducts(categoryId)
+        })
+
         viewModel.products.observe(viewLifecycleOwner, { products ->
             binding.swipeRefreshLayoutProducts.isRefreshing = false
             dismissLoading()

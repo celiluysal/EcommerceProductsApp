@@ -36,6 +36,7 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
         SessionManager.shared.getCategoryName(args.product.categoryId) { categoryName, error ->
             binding.textViewProductCategory.text = categoryName
         }
+        binding.textViewProductUpdateDate.text = args.product.updateDate
         binding.textViewProductPrice.text = "${args.product.price} ₺"
 
         Glide.with(binding.root).load(args.product.imageUrl)

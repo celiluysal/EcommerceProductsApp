@@ -2,8 +2,10 @@ package com.celiluysal.ecommerceproductsapp.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.PopupMenu
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -30,7 +32,20 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
         binding.includeToolbar.imageViewBack.setOnClickListener {
             onBackPressed()
         }
+    }
 
+    fun setupSortMenu(Result: (item: MenuItem) -> Unit) {
+        toolbarRightIconVisibility(true)
+        toolbarRightIconDrawable(R.drawable.ic_sort)
+        binding.includeToolbar.imageViewRight.setOnClickListener {
+            val popupMenu = PopupMenu(this, binding.includeToolbar.imageViewRight)
+            popupMenu.menuInflater.inflate(R.menu.product_sort_menu, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+                Result.invoke(item)
+                true
+            })
+            popupMenu.show()
+        }
     }
 
     fun toolbarRightIconVisibility(isVisible: Boolean) {

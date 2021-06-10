@@ -9,10 +9,7 @@ import com.celiluysal.ecommerceproductsapp.models.User
 import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -64,7 +61,6 @@ class FirebaseManager {
         val photoRef = storageRef.child("images/products/$name.jpeg")
         val baos = ByteArrayOutputStream()
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-//        val data = ByteArrayOutputStream().toByteArray()
 
         var uploadTask = photoRef.putBytes(baos.toByteArray())
             .addOnSuccessListener {
@@ -109,7 +105,7 @@ class FirebaseManager {
         product: Product,
         Result: ((success: Boolean, error: String?) -> Unit)
     ) {
-        fetchProductById(product.id) {_product, error ->
+        fetchProductById(product.id) { _product, error ->
             if (_product != null) {
                 productsRef.child(product.id).updateChildren(product.toDict().toMutableMap())
                     .addOnSuccessListener {
@@ -119,13 +115,6 @@ class FirebaseManager {
                         Result.invoke(false, it.localizedMessage)
                     }
 
-//                productsRef.child(product.id).setValue(product.toDict())
-//                    .addOnSuccessListener {
-//                        Result.invoke(true, null)
-//                    }
-//                    .addOnFailureListener {
-//                        Result.invoke(false, it.localizedMessage)
-//                    }
             } else
                 Result.invoke(false, error)
         }
@@ -152,10 +141,10 @@ class FirebaseManager {
 
     fun fetchOrderedProducts(
         orderBy: String,
-        count: Int = 10,
+        count: Int = 100,
         Result: ((products: MutableList<Product>?, error: String?) -> Unit)
     ) {
-        productsRef.orderByChild(orderBy).limitToFirst(count).get()
+        productsRef.limitToFirst(count).get()
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())
@@ -169,12 +158,15 @@ class FirebaseManager {
     }
 
     fun fetchProductsByCategoryId(
-        categoryId: String,
-        count: Int = 10,
+        categoryId: String?,
+        count: Int = 100,
         Result: ((products: MutableList<Product>?, error: String?) -> Unit)
     ) {
-        productsRef.orderByChild("categoryId").limitToFirst(count).equalTo(categoryId)
-            .get()
+        val query =
+            if (categoryId != null) productsRef.orderByChild("categoryId").limitToFirst(count)
+                .equalTo(categoryId)
+            else productsRef
+        query.get()
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())

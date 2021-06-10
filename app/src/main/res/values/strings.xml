@@ -16,16 +16,11 @@
     <string name="product_photo">Ürün Fotoğrafı</string>
 
     <string name="add_product_success">Ürün başarıyla eklendi.</string>
-
     <string name="field_cant_be_empty">alanı boş olamaz</string>
     <string name="did_not_match_passwords">Şifreler aynı değil</string>
     <string name="wrong_type">tipi yanlış</string>
     <string name="wrong_password_type">Şifre 6–18 karakter içermeli</string>
     <string name="empty_category">Kategori seçiniz</string>
-
-    <string name="wrong_email_type">Yanlış e-mail tipi</string>
-    <string name="short_password">Şifre en az 6 karakterli olmalı</string>
-    <string name="long_password">Şifre en fazla 18 karakterli olmalı</string>
 
     <string name="logout">Çıkış Yap</string>
     <string name="save">Kaydet</string>
@@ -38,4 +33,10 @@
     <string name="okay">Tamam</string>
     <string name="edit">Düzenle</string>
     <string name="delete">Sil</string>
+    <string name="price_ascending">Artan Fiyat</string>
+    <string name="price_descending">Azalan Fiyat</string>
+    <string name="sort">Sırala</string>
+    <string name="new_to_old">Yeniden Eskiye</string>
+    <string name="old_to_new">Eskiden Yeniye</string>
+    <string name="update_date">Güncellenme Tarihi</string>
 </resources>
