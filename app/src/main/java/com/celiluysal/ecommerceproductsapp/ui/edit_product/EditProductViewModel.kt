@@ -2,13 +2,14 @@ package com.celiluysal.ecommerceproductsapp.ui.edit_product
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import com.celiluysal.ecommerceproductsapp.base.BaseViewModel
 import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
 import com.celiluysal.ecommerceproductsapp.utils.Utils
 import java.util.*
 
-class EditProductViewModel : ViewModel() {
+class EditProductViewModel : BaseViewModel() {
 
     private fun uploadPhoto(
         productId: String,
@@ -23,21 +24,33 @@ class EditProductViewModel : ViewModel() {
         photo: Bitmap?,
         Result: (product: Product?, error: String?) -> Unit
     ) {
-        if (photo != null)
-            Result.invoke(null, "photo does not exist")
-
-        uploadPhoto(product.id, photo!!) { photoUrl, error ->
-            if (photoUrl != null) {
-                product.imageUrl = photoUrl
-                product.updateDate = Utils.shared.dateTimeStamp()
-                FirebaseManager.shared.updateProduct(product) { success, error ->
-                    if (success)
-                        Result.invoke(product, null)
-                    else
-                        Result.invoke(null, error)
+        startLoading()
+        if (photo != null) {
+            uploadPhoto(product.id, photo) { photoUrl, error ->
+                stopLoading()
+                if (photoUrl != null) {
+                    startLoading()
+                    product.imageUrl = photoUrl
+                    product.updateDate = Utils.shared.dateTimeStamp()
+                    FirebaseManager.shared.updateProduct(product) { success, error ->
+                        stopLoading()
+                        if (success)
+                            Result.invoke(product, null)
+                        else
+                            Result.invoke(null, error)
+                    }
                 }
+                Result.invoke(null, error)
             }
-            Result.invoke(null, error)
+        } else {
+            product.updateDate = Utils.shared.dateTimeStamp()
+            FirebaseManager.shared.updateProduct(product) { success, error ->
+                stopLoading()
+                if (success)
+                    Result.invoke(product, null)
+                else
+                    Result.invoke(null, error)
+            }
         }
     }
 
@@ -45,9 +58,12 @@ class EditProductViewModel : ViewModel() {
         request: ProductRequestModel,
         Result: ((product: Product?, error: String?) -> Unit)
     ) {
+        startLoading()
         val productId = UUID.randomUUID().toString()
         uploadPhoto(productId, request.photo) { photoUrl, error ->
+            stopLoading()
             if (photoUrl != null) {
+                startLoading()
                 val product = Product(
                     id = productId,
                     name = request.name,
@@ -58,6 +74,7 @@ class EditProductViewModel : ViewModel() {
                     price = request.price
                 )
                 FirebaseManager.shared.addProduct(product) { success, error ->
+                    stopLoading()
                     if (success)
                         Result.invoke(product, null)
                     else

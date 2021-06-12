@@ -12,7 +12,7 @@ import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductDetailFragmentBinding
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
 
 class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, ProductDetailViewModel>() {
 
@@ -28,6 +28,9 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ProductDetailViewModel::class.java)
+
+        observeLoading(viewLifecycleOwner)
+        observeErrorMessage(viewLifecycleOwner)
 
         (activity as MainActivity).toolbarBackIconVisibility(true)
 
@@ -52,15 +55,11 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
         }
 
         binding.buttonDelete.setOnClickListener {
-            viewModel.deleteProduct(args.product.id) { success, error ->
+            viewModel.deleteProduct(args.product.id) { success, _ ->
                 if (success)
                     activity?.onBackPressed()
-
             }
-
         }
-
-
 
         return binding.root
     }
@@ -77,5 +76,4 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
         super.onDestroy()
         (activity as MainActivity).toolbarBackIconVisibility(false)
     }
-
 }

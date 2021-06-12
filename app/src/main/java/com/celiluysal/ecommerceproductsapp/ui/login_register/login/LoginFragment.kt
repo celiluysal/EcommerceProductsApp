@@ -27,9 +27,11 @@ class LoginFragment : BaseFragment<LoginFragmentBinding, LoginViewModel>() {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
-        initSimpleMessageDialog()
+        observeLoading(viewLifecycleOwner)
+        observeErrorMessage(viewLifecycleOwner)
 
         binding.buttonLogin.setOnClickListener {
+            initSimpleMessageDialog()
             binding.editTextEmail.isEmail(context)?.let {
                 showMessageDialog(getString(R.string.email) + " " + it)
                 return@setOnClickListener
@@ -43,16 +45,15 @@ class LoginFragment : BaseFragment<LoginFragmentBinding, LoginViewModel>() {
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextPassword.text.toString()
 
-            showLoading()
             viewModel.login(email, password) { success, error ->
-                dismissLoading()
                 if (success) {
                     activity?.let {
                         it.startActivity(Intent(it, MainActivity::class.java))
                         it.finish()
                     }
-                } else
-                    error?.let { showMessageDialog(it) }
+                }
+                else
+                    error?.let { viewModel.setErrorMessage(it) }
             }
         }
 

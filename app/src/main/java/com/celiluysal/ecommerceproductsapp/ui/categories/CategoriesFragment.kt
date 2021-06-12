@@ -2,18 +2,15 @@ package com.celiluysal.ecommerceproductsapp.ui.categories
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
-import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.CategoriesFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Category
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 
 class CategoriesFragment : BaseFragment<CategoriesFragmentBinding, CategoriesViewModel>() {
 
@@ -30,9 +27,18 @@ class CategoriesFragment : BaseFragment<CategoriesFragmentBinding, CategoriesVie
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(CategoriesViewModel::class.java)
 
-        binding.recyclerViewCategories.layoutManager = GridLayoutManager(context,3)
+        observeErrorMessage(viewLifecycleOwner)
+        observeLoading(viewLifecycleOwner)
 
-        SessionManager.shared.getCategories { categories ->
+        observeViewModel()
+
+        return binding.root
+    }
+
+    override fun observeViewModel() {
+        super.observeViewModel()
+        viewModel.categories.observe(viewLifecycleOwner, { categories ->
+            binding.recyclerViewCategories.layoutManager = GridLayoutManager(context,3)
             categoriesRecyclerViewAdapter = CategoriesRecyclerViewAdapter(
                 categories,
                 object : CategoriesRecyclerViewAdapter.CategoryAdapterClickListener {
@@ -42,9 +48,7 @@ class CategoriesFragment : BaseFragment<CategoriesFragmentBinding, CategoriesVie
 
                 })
             binding.recyclerViewCategories.adapter = categoriesRecyclerViewAdapter
-        }
-
-        return binding.root
+        })
     }
 
 

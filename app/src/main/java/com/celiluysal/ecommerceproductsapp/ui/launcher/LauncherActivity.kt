@@ -5,10 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import com.celiluysal.ecommerceproductsapp.firebase.FirebaseManager
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.login_register.LoginRegisterActivity
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
 
 class LauncherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +15,6 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         SessionManager.shared.loadCategories()
-        FirebaseManager.shared.observeCategoriesChild()
 
         if (SessionManager.shared.isLoggedIn()) {
             SessionManager.shared.fetchUser { success, error ->

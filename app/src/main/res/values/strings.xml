@@ -22,6 +22,7 @@
     <string name="wrong_type">tipi yanlış</string>
     <string name="wrong_password_type">Şifre 6–18 karakter içermeli</string>
     <string name="empty_category">Kategori seçiniz</string>
+    <string name="categories_did_not_found">Kategoriler bulunamadı.</string>
 
     <string name="logout">Çıkış Yap</string>
     <string name="save">Kaydet</string>

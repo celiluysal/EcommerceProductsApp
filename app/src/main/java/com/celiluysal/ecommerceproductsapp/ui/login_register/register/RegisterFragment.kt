@@ -30,6 +30,9 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
+        observeLoading(viewLifecycleOwner)
+        observeErrorMessage(viewLifecycleOwner)
+
         initSimpleMessageDialog()
 
         binding.buttonRegister.setOnClickListener {
@@ -52,11 +55,10 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
                 context,
                 binding.textInputEditTextPassword.text.toString()
             )?.let {
-                showMessageDialog(getString(R.string.password) + " " + it)
+                showMessageDialog(it)
                 return@setOnClickListener
             }
 
-            showLoading()
             viewModel.registerAndLogin(
                 RegisterRequestModel(
                     fullName = binding.textInputEditTextFullName.text.toString(),
@@ -64,14 +66,13 @@ class RegisterFragment : BaseFragment<RegisterFragmentBinding, RegisterViewModel
                     password = binding.textInputEditTextPassword.text.toString(),
                 )
             ) { success, error ->
-                dismissLoading()
                 if (success) {
                     activity?.let {
                         startActivity(Intent(it, MainActivity::class.java))
                         it.finish()
                     }
                 } else
-                    error?.let { showMessageDialog(it) }
+                    error?.let { viewModel.setErrorMessage(it) }
             }
         }
 

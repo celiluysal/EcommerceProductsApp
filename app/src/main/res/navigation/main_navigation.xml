@@ -77,5 +77,8 @@
             app:destination="@id/productDetailFragment"
             app:popUpTo="@id/productDetailFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_editProductFragment_to_addProductFragment"
+            app:destination="@id/addProductFragment" />
     </fragment>
 </navigation>

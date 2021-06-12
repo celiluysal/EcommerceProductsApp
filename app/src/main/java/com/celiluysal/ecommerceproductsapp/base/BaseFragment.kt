@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.ui.loading_dialog.LoadingDialog
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
+import com.celiluysal.ecommerceproductsapp.utils.LOADING_DIALOG_TAG
+import com.celiluysal.ecommerceproductsapp.utils.MESSAGE_DIALOG_TAG
 
-abstract class BaseFragment<VB: ViewBinding, VM: ViewModel>: Fragment() {
+abstract class BaseFragment<VB: ViewBinding, VM: BaseViewModel>: Fragment() {
     protected lateinit var binding: VB
     lateinit var viewModel: VM
 
@@ -24,10 +27,28 @@ abstract class BaseFragment<VB: ViewBinding, VM: ViewModel>: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = getViewBinding(inflater, container)
+        loadingDialog = LoadingDialog()
+
+
         return binding.root
     }
 
+    fun observeLoading(lifecycleOwner: LifecycleOwner) {
+        viewModel.isLoading.observe(lifecycleOwner, {
+            if (it) showLoading() else dismissLoading()
+        })
+    }
+
+    fun observeErrorMessage(lifecycleOwner: LifecycleOwner) {
+        viewModel.errorMessage.observe(lifecycleOwner, {
+            initSimpleMessageDialog()
+            showMessageDialog(it)
+        })
+    }
+
     protected abstract fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+
+    open fun observeViewModel() {}
 
     fun initSimpleMessageDialog() {
         messageDialog = MessageDialog(
@@ -45,20 +66,21 @@ abstract class BaseFragment<VB: ViewBinding, VM: ViewModel>: Fragment() {
         activity?.supportFragmentManager?.let {
             messageDialog?.show(
                 it,
-                "MessageDialog"
+                MESSAGE_DIALOG_TAG
             )
         }
     }
 
-    fun showLoading() {
+    private fun showLoading() {
         loadingDialog = LoadingDialog()
         activity?.supportFragmentManager?.let {
-            loadingDialog.show(it, "LoadingDialog")
+            loadingDialog.show(it, LOADING_DIALOG_TAG)
         }
     }
 
-    fun dismissLoading() {
-        loadingDialog.dismiss()
+    private fun dismissLoading() {
+        if (loadingDialog.isVisible)
+            loadingDialog.dismiss()
     }
 
 }

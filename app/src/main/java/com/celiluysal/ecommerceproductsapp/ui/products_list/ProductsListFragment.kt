@@ -18,7 +18,7 @@ import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductsListFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.SortItem
 
 class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsListViewModel>(), LifecycleObserver {
@@ -36,7 +36,6 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
     fun onCreated(){
         (activity as MainActivity).let { mainActivity ->
             mainActivity.setupSortMenu { item ->
-                showLoading()
                 when (item.itemId) {
                     R.id.sortByPriceDsc -> viewModel.sortItem.value = SortItem.PriceDsc
                     R.id.sortByPriceAsc -> viewModel.sortItem.value = SortItem.PriceAsc
@@ -66,19 +65,11 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         super.onCreateView(inflater, container, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
-
         categoryId = args.categoryId
 
-        showLoading()
+        observeLoading(viewLifecycleOwner)
+        observeErrorMessage(viewLifecycleOwner)
         observeViewModel()
-
-        if (categoryId == null)
-            binding.textViewListContent.text = getString(R.string.all_products)
-        else
-            SessionManager.shared.getCategoryName(categoryId!!) { categoryName, error ->
-                binding.textViewListContent.text = categoryName
-                (activity as MainActivity).toolbarBackIconVisibility(true)
-            }
 
         binding.swipeRefreshLayoutProducts.setOnRefreshListener {
             viewModel.fetchAndSortProducts(categoryId)
@@ -88,14 +79,24 @@ class ProductsListFragment : BaseFragment<ProductsListFragmentBinding, ProductsL
         return binding.root
     }
 
-    private fun observeViewModel() {
+    override fun observeViewModel() {
+        super.observeViewModel()
+        viewModel.categories.observe(viewLifecycleOwner, {
+            if (categoryId == null)
+                binding.textViewListContent.text = getString(R.string.all_products)
+            else
+                SessionManager.shared.getCategoryName(categoryId!!) { categoryName, error ->
+                    binding.textViewListContent.text = categoryName
+                    (activity as MainActivity).toolbarBackIconVisibility(true)
+                }
+        })
+
         viewModel.sortItem.observe(viewLifecycleOwner, {
             viewModel.fetchAndSortProducts(categoryId)
         })
 
         viewModel.products.observe(viewLifecycleOwner, { products ->
             binding.swipeRefreshLayoutProducts.isRefreshing = false
-            dismissLoading()
             productsRecyclerViewAdapter = ProductsRecyclerViewAdapter(
                 products,
                 object : ProductsRecyclerViewAdapter.ProductAdapterClickListener {

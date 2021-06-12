@@ -95,6 +95,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, ViewModel>() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.e("MainActivity","on_back_press")
+    }
+
 
 
 

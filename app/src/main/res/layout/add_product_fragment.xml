@@ -7,8 +7,4 @@
     android:background="@color/screen_background"
     tools:context=".ui.add_product.AddProductFragment">
 
-    <include
-        android:id="@+id/includeProductFields"
-        layout="@layout/product_fields_layout" />
-
 </ScrollView>

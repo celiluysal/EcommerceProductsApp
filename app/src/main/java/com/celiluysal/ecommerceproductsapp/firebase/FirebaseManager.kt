@@ -1,15 +1,12 @@
 package com.celiluysal.ecommerceproductsapp.firebase
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.celiluysal.ecommerceproductsapp.models.Category
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.RegisterRequestModel
 import com.celiluysal.ecommerceproductsapp.models.User
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -22,22 +19,13 @@ class FirebaseManager {
 
     private val dbRef = Firebase.database.reference
     private val storageRef = Firebase.storage.reference
+
     private val productsRef = dbRef.child("Products")
     private val usersRef = dbRef.child("Users")
     private val categoriesRef = dbRef.child("Categories")
 
-
     private val auth = Firebase.auth
 
-    fun observeCategoriesChild() {
-        categoriesRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                SessionManager.shared.loadCategories()
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
 
     fun fetchCategories(Result: (categories: List<Category>?, error: String?) -> Unit) {
         categoriesRef.get()
@@ -68,14 +56,12 @@ class FirebaseManager {
                     .addOnSuccessListener {
                         Result.invoke(it.toString(), null)
                     }.addOnFailureListener {
-                        // Handle any errors
+                        Result.invoke(null, it.localizedMessage)
                     }
             }
             .addOnFailureListener {
-
+                Result.invoke(null, it.localizedMessage)
             }
-
-
     }
 
     fun addProduct(
@@ -114,29 +100,9 @@ class FirebaseManager {
                     .addOnFailureListener {
                         Result.invoke(false, it.localizedMessage)
                     }
-
             } else
                 Result.invoke(false, error)
         }
-
-    }
-
-    fun fetchProductsByName(
-        name: String,
-        count: Int = 10,
-        Result: ((products: MutableList<Product>?, error: String?) -> Unit)
-    ) {
-        productsRef.orderByChild("name").limitToFirst(count).equalTo(name).get()
-            .addOnSuccessListener {
-                val products = FirebaseUtils.shared.snapshotToProducts(it)
-                if (products.isNotEmpty())
-                    Result.invoke(products, null)
-                else
-                    Result.invoke(null, "Result is empty")
-            }
-            .addOnFailureListener {
-                Result.invoke(null, it.localizedMessage)
-            }
     }
 
     fun fetchOrderedProducts(
@@ -144,7 +110,7 @@ class FirebaseManager {
         count: Int = 100,
         Result: ((products: MutableList<Product>?, error: String?) -> Unit)
     ) {
-        productsRef.limitToFirst(count).get()
+        productsRef.orderByChild(orderBy).limitToFirst(count).get()
             .addOnSuccessListener {
                 val products = FirebaseUtils.shared.snapshotToProducts(it)
                 if (products.isNotEmpty())
@@ -179,7 +145,10 @@ class FirebaseManager {
             }
     }
 
-    fun fetchProductById(id: String, Result: ((product: Product?, error: String?) -> Unit)) {
+    private fun fetchProductById(
+        id: String,
+        Result: ((product: Product?, error: String?) -> Unit)
+    ) {
         productsRef.child(id).get()
             .addOnSuccessListener {
                 val product = FirebaseUtils.shared.snapshotToProduct(it)

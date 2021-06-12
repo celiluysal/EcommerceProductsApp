@@ -25,19 +25,14 @@ import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.celiluysal.ecommerceproductsapp.MainNavigationDirections
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.base.BaseFragment
-import com.celiluysal.ecommerceproductsapp.databinding.AddProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.databinding.EditProductFragmentBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
 import com.celiluysal.ecommerceproductsapp.models.ProductRequestModel
-import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductFragmentDirections
-import com.celiluysal.ecommerceproductsapp.ui.add_product.AddProductViewModel
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.ui.message_dialog.MessageDialog
-import com.celiluysal.ecommerceproductsapp.ui.product_detail.ProductDetailFragmentArgs
-import com.celiluysal.ecommerceproductsapp.utils.SessionManager
+import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
 import com.celiluysal.ecommerceproductsapp.utils.Utils
 import com.celiluysal.ecommerceproductsapp.utils.isEmpty
 import java.io.File
@@ -62,9 +57,14 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(EditProductViewModel::class.java)
-        val screenType: ScreenType = if (args.product == null) ScreenType.AddProduct else ScreenType.EditProduct
 
-        when(screenType) {
+        observeLoading(viewLifecycleOwner)
+        observeErrorMessage(viewLifecycleOwner)
+
+        val screenType: ScreenType =
+            if (args.product == null) ScreenType.AddProduct else ScreenType.EditProduct
+
+        when (screenType) {
             ScreenType.AddProduct -> {
                 setSpinnerCategory(null)
                 keyboardSizeListener { isSoftKeyActive ->
@@ -79,8 +79,6 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                 (activity as MainActivity).bottomNavBarVisibility(false)
             }
         }
-
-
 
 
         initSimpleMessageDialog()
@@ -102,14 +100,13 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                 return@setOnClickListener
             }
 
-            if (photo == null) {
+            if (photo == null && screenType == ScreenType.AddProduct) {
                 showMessageDialog(getString(R.string.product_photo) + " " + getString(R.string.field_cant_be_empty))
                 return@setOnClickListener
             }
 
-            when(screenType) {
+            when (screenType) {
                 ScreenType.AddProduct -> {
-                    showLoading()
                     viewModel.addProduct(
                         ProductRequestModel(
                             name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
@@ -120,7 +117,6 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                             photo = this.photo!!
                         )
                     ) { product, error ->
-                        dismissLoading()
                         if (product != null) {
                             messageDialog = MessageDialog(
                                 object : MessageDialog.MessageDialogListener {
@@ -135,25 +131,28 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                     }
                 }
                 ScreenType.EditProduct -> {
-                    showLoading()
                     viewModel.updateProduct(
                         Product(
                             id = args.product!!.id,
                             name = binding.includeProductFields.textInputEditTextProductName.text.toString(),
                             description = binding.includeProductFields.textInputEditTextProductDescription.text.toString(),
                             categoryId = binding.includeProductFields.spinnerCategory.selectedItemPosition.toString(),
-                            price = binding.includeProductFields.textInputEditTextProductPrice.text.toString().toDouble(),
-                            imageUrl = "",
+                            price = binding.includeProductFields.textInputEditTextProductPrice.text.toString()
+                                .toDouble(),
+                            imageUrl = args.product!!.imageUrl,
                             updateDate = args.product!!.updateDate
                         ), this.photo
                     ) { product, error ->
-                        dismissLoading()
                         if (product != null) {
                             messageDialog = MessageDialog(
                                 object : MessageDialog.MessageDialogListener {
                                     override fun onLeftButtonClick() {
                                         clearFields()
-                                        findNavController().navigate(MainNavigationDirections.actionToProductDetailFragment(product))
+                                        findNavController().navigate(
+                                            EditProductFragmentDirections.actionEditProductFragmentToProductDetailFragment(
+                                                product
+                                            )
+                                        )
                                         messageDialog?.dismiss()
                                     }
                                 })
@@ -163,8 +162,6 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                     }
                 }
             }
-
-
 
 
         }
@@ -193,10 +190,23 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
         binding.includeProductFields.textInputEditTextProductDescription.setText(product.description)
         setSpinnerCategory(product.categoryId)
         binding.includeProductFields.textInputEditTextProductPrice.setText(product.price.toString())
-        Glide.with(binding.root).load(product.imageUrl)
+        if (this.photo != null)
+            setImageViewProduct(photo!!)
+        else
+            setImageViewProduct(product.imageUrl)
+    }
+
+    private fun setImageViewProduct(photoUrl: String) {
+        Glide.with(binding.root).load(photoUrl)
             .placeholder(R.drawable.place_holder)
             .into(binding.includeProductFields.imageViewProduct)
     }
+    private fun setImageViewProduct(bitmap: Bitmap) {
+        Glide.with(binding.root).load(bitmap)
+            .placeholder(R.drawable.place_holder)
+            .into(binding.includeProductFields.imageViewProduct)
+    }
+
 
     private val permissions = arrayOf(android.Manifest.permission.CAMERA)
     private fun hasNoPermissions(): Boolean {
@@ -246,7 +256,8 @@ class EditProductFragment : BaseFragment<EditProductFragmentBinding, EditProduct
                 photo = Utils.shared.resizeBitmap(photo, 1024)
 
                 this.photo = photo
-                binding.includeProductFields.imageViewProduct.setImageBitmap(photo)
+                setImageViewProduct(photo)
+//                binding.includeProductFields.imageViewProduct.setImageBitmap(photo)
             }
         }
 
