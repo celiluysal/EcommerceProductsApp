@@ -41,4 +41,6 @@
     <string name="new_to_old">Yeniden Eskiye</string>
     <string name="old_to_new">Eskiden Yeniye</string>
     <string name="update_date">Güncellenme Tarihi</string>
+    <string name="price_symbol">₺</string>
+
 </resources>

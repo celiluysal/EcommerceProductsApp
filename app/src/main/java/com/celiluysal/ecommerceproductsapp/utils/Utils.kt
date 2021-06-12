@@ -8,7 +8,9 @@ import android.media.ExifInterface
 import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
+import com.celiluysal.ecommerceproductsapp.R
 import java.io.File
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,7 +28,10 @@ class Utils {
     @RequiresApi(Build.VERSION_CODES.O)
     fun stringToDateTime(stringDate: String): LocalDateTime = LocalDateTime.parse(stringDate)
 
-
+    fun getPriceText(context: Context,price: Double): String {
+        val priceFormat = DecimalFormat("#0.00").format(price)
+        return priceFormat.toString() + context.getString(R.string.price_symbol)
+    }
 
     fun dpToPx(context: Context, valueInDp: Float): Float {
         val metrics = context.resources.displayMetrics

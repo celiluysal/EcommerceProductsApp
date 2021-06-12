@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.celiluysal.ecommerceproductsapp.R
 import com.celiluysal.ecommerceproductsapp.databinding.ItemProductCardBinding
 import com.celiluysal.ecommerceproductsapp.models.Product
+import com.celiluysal.ecommerceproductsapp.utils.Utils
 
 class ProductsRecyclerViewAdapter(
     private val products: MutableList<Product>,
@@ -20,7 +21,7 @@ class ProductsRecyclerViewAdapter(
         fun bind(product: Product, action: ProductAdapterClickListener) {
 
             binding.textViewProductName.text = product.name
-            binding.textViewProductPrice.text = product.price.toString()
+            binding.textViewProductPrice.text = Utils.shared.getPriceText(binding.root.context, product.price)
 
             Glide.with(binding.root).load(product.imageUrl)
                 .placeholder(R.drawable.place_holder)

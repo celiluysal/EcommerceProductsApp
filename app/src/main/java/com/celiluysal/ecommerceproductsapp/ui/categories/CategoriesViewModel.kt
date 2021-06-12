@@ -8,7 +8,10 @@ import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
 class CategoriesViewModel : BaseViewModel() {
     val categories = MutableLiveData<List<Category>>()
 
-    init {
+
+
+    fun getCategories() {
+        SessionManager.shared.loadCategories()
         startLoading()
         SessionManager.shared.getCategories { categories ->
             stopLoading()

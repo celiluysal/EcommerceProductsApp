@@ -26,6 +26,7 @@ class CategoriesFragment : BaseFragment<CategoriesFragmentBinding, CategoriesVie
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(this).get(CategoriesViewModel::class.java)
+        viewModel.getCategories()
 
         observeErrorMessage(viewLifecycleOwner)
         observeLoading(viewLifecycleOwner)

@@ -13,6 +13,7 @@ import com.celiluysal.ecommerceproductsapp.base.BaseFragment
 import com.celiluysal.ecommerceproductsapp.databinding.ProductDetailFragmentBinding
 import com.celiluysal.ecommerceproductsapp.ui.main.MainActivity
 import com.celiluysal.ecommerceproductsapp.session_manager.SessionManager
+import com.celiluysal.ecommerceproductsapp.utils.Utils
 
 class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, ProductDetailViewModel>() {
 
@@ -40,7 +41,7 @@ class ProductDetailFragment : BaseFragment<ProductDetailFragmentBinding, Product
             binding.textViewProductCategory.text = categoryName
         }
         binding.textViewProductUpdateDate.text = args.product.updateDate
-        binding.textViewProductPrice.text = "${args.product.price} ₺"
+        binding.textViewProductPrice.text = Utils.shared.getPriceText(binding.root.context, args.product.price)
 
         Glide.with(binding.root).load(args.product.imageUrl)
             .placeholder(R.drawable.place_holder)
