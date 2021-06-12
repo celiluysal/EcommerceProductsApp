@@ -4,11 +4,11 @@
 I developed this project for show my knowledge in Android programming with Kotlin, MVVM design pattern, Firebase Realtime usage.
 
 <p float="left">
-<img src=figures/home.jpeg width="180">
-<img src=figures/productDetail.jpeg width="180">
-<img src=figures/categories.jpeg width="180">
-<img src=figures/category-products.jpeg width="180">
-<img src=figures/home-sort.jpeg width="180">
+<img src=figures/home.jpeg width="150">
+<img src=figures/productDetail.jpeg width="150">
+<img src=figures/categories.jpeg width="150">
+<img src=figures/category-products.jpeg width="150">
+<img src=figures/home-sort.jpeg width="150">
 </p>
 
 + User can be register, login and logout.
@@ -51,11 +51,11 @@ App was developed mostly using Android Jetpack Libraries (eg. ViewBinding, Navig
  
 Other Screen Shots:
 <p float="left">
-<img src=figures/addProduct.jpeg width="180">
-<img src=figures/editProduct.jpeg width="180">
-<img src=figures/loading.jpeg width="180">
-<img src=figures/error.jpeg width="180">
-<img src=figures/profile.jpeg width="180">
+<img src=figures/addProduct.jpeg width="150">
+<img src=figures/editProduct.jpeg width="150">
+<img src=figures/loading.jpeg width="150">
+<img src=figures/error.jpeg width="150">
+<img src=figures/profile.jpeg width="150">
 </p>
 
 
